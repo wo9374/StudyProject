@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -17,6 +19,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //Manifest 와 코드에서 모두 사용할 때
+        //buildConfigField("String","NAVER_CLIENT_ID", getApiKey("naver_client_id"))
     }
 
     buildTypes {
@@ -26,6 +31,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "NAVER_CLIENT_ID", getApiKey("naver_client_id"))
+            buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("naver_client_secret"))
         }
     }
     compileOptions {
@@ -43,9 +51,14 @@ android {
     }
 }
 
+// local.properties 내부에서 key값을 가져오는 함수
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
+}
+
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
