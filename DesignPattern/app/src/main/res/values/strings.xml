@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DesignPattern</string>
+
+    <string name="mvc">MVC</string>
+    <string name="mvp">MVP</string>
+    <string name="mvvm">MVVM</string>
+    <string name="mvi">MVI</string>
 </resources>
