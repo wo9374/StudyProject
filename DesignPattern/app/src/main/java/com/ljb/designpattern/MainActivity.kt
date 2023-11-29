@@ -3,7 +3,7 @@ package com.ljb.designpattern
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import com.ljb.designpattern.base.BaseActivity
+import com.ljb.base.BaseActivity
 import com.ljb.designpattern.databinding.ActivityMainBinding
 import com.ljb.designpattern.mvc.MvcActivity
 import com.ljb.designpattern.mvi.MviActivity

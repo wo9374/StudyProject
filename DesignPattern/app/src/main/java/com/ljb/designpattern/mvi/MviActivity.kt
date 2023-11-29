@@ -2,7 +2,7 @@ package com.ljb.designpattern.mvi
 
 import android.os.Bundle
 import com.ljb.designpattern.R
-import com.ljb.designpattern.base.BaseActivity
+import com.ljb.base.BaseActivity
 import com.ljb.designpattern.databinding.ActivityMviBinding
 
 class MviActivity: BaseActivity<ActivityMviBinding>(R.layout.activity_mvi) {

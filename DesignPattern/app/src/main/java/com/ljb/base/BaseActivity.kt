@@ -1,4 +1,4 @@
-package com.ljb.designpattern.base
+package com.ljb.base
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
