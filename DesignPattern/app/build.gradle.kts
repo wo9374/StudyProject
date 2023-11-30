@@ -20,8 +20,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        //Manifest 와 코드에서 모두 사용할 때
-        //buildConfigField("String","NAVER_CLIENT_ID", getApiKey("naver_client_id"))
+
+        //manifestPlaceholders["NAVER_MAP_KEY"] = getLocalProperty("naver_client_id")
+
+        buildConfigField("String", "NAVER_CLIENT_ID", getLocalProperty("naver_client_id"))
+        buildConfigField("String", "NAVER_CLIENT_SECRET", getLocalProperty("naver_client_secret"))
     }
 
     buildTypes {
@@ -31,9 +34,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
-            buildConfigField("String", "NAVER_CLIENT_ID", getApiKey("naver_client_id"))
-            buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("naver_client_secret"))
         }
     }
     compileOptions {
@@ -52,7 +52,7 @@ android {
 }
 
 // local.properties 내부에서 key값을 가져오는 함수
-fun getApiKey(propertyKey: String): String {
+fun getLocalProperty(propertyKey: String): String {
     return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }
 
@@ -65,4 +65,14 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    //Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:${rootProject.extra["retrofit_version"]}")
+    implementation ("com.squareup.retrofit2:converter-gson:${rootProject.extra["retrofit_version"]}")       //Gson 처리시
+    implementation ("com.squareup.retrofit2:converter-jaxb:${rootProject.extra["retrofit_version"]}")       //XML 처리시
+    implementation ("com.squareup.retrofit2:converter-scalars:${rootProject.extra["retrofit_version"]}")    //String 처리시
+
+    //OkHttp
+    //implementation ("com.squareup.okhttp3:okhttp:${rootProject.extra["okhttp_version"]}")
+    implementation ("com.squareup.okhttp3:logging-interceptor:${rootProject.extra["okhttp_version"]}")      //요청, 응답 정보 기록
 }
