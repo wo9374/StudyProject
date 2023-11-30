@@ -6,6 +6,15 @@ import android.text.Html
 import android.util.TypedValue
 import android.view.View
 
+
+
+sealed class UiState<out T> {
+    data object Empty : UiState<Nothing>()
+    data object Loading : UiState<Nothing>()
+    data class Complete<out T>(val data: T) : UiState<T>()
+    data class Fail(val message: String?) : UiState<Nothing>()
+}
+
 fun String.htmlToString() : String {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
     {

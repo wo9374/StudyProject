@@ -12,17 +12,16 @@ import com.ljb.designpattern.NewsDecoration
 import com.ljb.designpattern.NewsRepository
 import com.ljb.designpattern.NewsResponse
 import com.ljb.designpattern.R
-import com.ljb.designpattern.databinding.ActivityMvcBinding
+import com.ljb.designpattern.databinding.ActivityPatternsBinding
+import com.ljb.extension.UiState
 import com.ljb.extension.setVisibility
-import com.ljb.network.RetrofitService.naverService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class MvcActivity : BaseActivity<ActivityMvcBinding>(R.layout.activity_mvc) {
+class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patterns) {
 
     private var _newsList = MutableStateFlow<UiState<NewsResponse>>(UiState.Loading)
     private val newsList: StateFlow<UiState<NewsResponse>> get() = _newsList
@@ -92,11 +91,4 @@ class MvcActivity : BaseActivity<ActivityMvcBinding>(R.layout.activity_mvc) {
                 }
             }
     }
-}
-
-sealed class UiState<out T> {
-    data object Empty : UiState<Nothing>()
-    data object Loading : UiState<Nothing>()
-    data class Complete<out T>(val data: T) : UiState<T>()
-    data class Fail(val message: String?) : UiState<Nothing>()
 }
