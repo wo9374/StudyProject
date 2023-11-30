@@ -28,6 +28,7 @@
 
         <activity
             android:name=".mvc.MvcActivity"
+            android:theme="@style/Theme.DesignPattern.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".mvp.MvpActivity"
