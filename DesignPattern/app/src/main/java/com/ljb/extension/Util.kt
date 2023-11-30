@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.text.Html
 import android.util.TypedValue
+import android.view.View
 
 fun String.htmlToString() : String {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -21,3 +22,12 @@ val Int.dp: Int
         this.toFloat(),
         Resources.getSystem().displayMetrics
     ).toInt()
+
+
+
+fun View.setVisibility(boolean: Boolean) {
+    if (boolean)
+        this.visibility = View.VISIBLE
+    else
+        this.visibility = View.INVISIBLE
+}

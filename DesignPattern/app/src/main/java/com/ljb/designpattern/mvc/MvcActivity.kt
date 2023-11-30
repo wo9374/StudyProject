@@ -1,7 +1,6 @@
 package com.ljb.designpattern.mvc
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Lifecycle
@@ -13,6 +12,7 @@ import com.ljb.designpattern.NewsDecoration
 import com.ljb.designpattern.NewsResponse
 import com.ljb.designpattern.R
 import com.ljb.designpattern.databinding.ActivityMvcBinding
+import com.ljb.extension.setVisibility
 import com.ljb.network.RetrofitService.naverService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,13 +101,6 @@ class MvcActivity : BaseActivity<ActivityMvcBinding>(R.layout.activity_mvc) {
             }
         }
     }
-}
-
-fun View.setVisibility(boolean: Boolean) {
-    if (boolean)
-        this.visibility = View.VISIBLE
-    else
-        this.visibility = View.INVISIBLE
 }
 
 sealed class UiState<out T> {
