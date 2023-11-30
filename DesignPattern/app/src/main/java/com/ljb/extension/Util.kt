@@ -1,11 +1,13 @@
 package com.ljb.extension
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Build
 import android.text.Html
 import android.util.TypedValue
 import android.view.View
-
+import android.widget.Toast
+import com.ljb.designpattern.R
 
 
 sealed class UiState<out T> {
@@ -39,4 +41,8 @@ fun View.setVisibility(boolean: Boolean) {
         this.visibility = View.VISIBLE
     else
         this.visibility = View.INVISIBLE
+}
+
+fun Context.showToast(str:String?){
+    Toast.makeText(this, str, Toast.LENGTH_SHORT).show()
 }
