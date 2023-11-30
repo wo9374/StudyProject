@@ -47,7 +47,7 @@ class MvcActivity : BaseActivity<ActivityMvcBinding>(R.layout.activity_mvc) {
                     } else {
                         lifecycleScope.launch(Dispatchers.IO){
                             _newsList.emit(UiState.Loading)
-                            newsRepository.getSearchNews("안드로이드").collectLatest { _newsList.emit(it) }
+                            newsRepository.getSearchNews(query).collectLatest { _newsList.emit(it) }
                         }
                         false   //키보드 내림
                     }
