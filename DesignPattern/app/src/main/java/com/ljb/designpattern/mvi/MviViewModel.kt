@@ -21,29 +21,9 @@ class MviViewModel : ContainerHost<NewsState, NewsSideEffect>, ViewModel() {
 
     private val newsRepository = NewsRepository()
 
-    //초기 init 검색
-    fun setUpUI() = intent {
+    fun getSearchNews(query: String) = intent {
         reduce { state.copy(loading = true) }
 
-        //사용자가 직접 요청한 검색 함수와 비슷하지만 결과가 신뢰성 있는 검색어와 초기 구성 함수로 empty와 success의 sideEffect 시나리오가 필요가 없음
-        newsRepository.getSearchNews("안드로이드").flowOn(Dispatchers.IO).collectLatest { networkState ->
-            when (networkState) {
-                is NetworkState.Success -> {
-                    reduce { state.copy(loading = false) }
-                    reduce { state.copy(list = networkState.data, loading = false) }
-                }
-
-                is NetworkState.Error -> {
-                    reduce { state.copy(exception = Exception("Error Code : ${networkState.errorCode} - ${networkState.message}")) }
-                    postSideEffect(NewsSideEffect.Error(networkState.message))
-                }
-            }
-        }
-    }
-
-
-    //사용자가 직접 요청한 검색
-    fun getSearchNews(query: String) = intent {
         newsRepository.getSearchNews(query).flowOn(Dispatchers.IO).collectLatest { networkState ->
             when (networkState) {
                 is NetworkState.Success -> {

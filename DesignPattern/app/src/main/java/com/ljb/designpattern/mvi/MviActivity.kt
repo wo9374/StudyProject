@@ -54,7 +54,7 @@ class MviActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patte
             sideEffect = ::handleSideEffect
         )
 
-        viewModel.setUpUI()
+        viewModel.getSearchNews("안드로이드")
     }
 
 
