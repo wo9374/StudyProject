@@ -36,6 +36,7 @@
             android:exported="false" />
         <activity
             android:name=".mvvm.MvvmActivity"
+            android:theme="@style/Theme.DesignPattern.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".mvi.MviActivity"
