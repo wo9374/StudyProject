@@ -5,15 +5,14 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.lifecycleScope
 import com.ljb.base.BaseActivity
 import com.ljb.designpattern.NewsAdapter
+import com.ljb.designpattern.NewsData
 import com.ljb.designpattern.NewsDecoration
 import com.ljb.designpattern.NewsRepository
-import com.ljb.designpattern.NewsResponse
 import com.ljb.designpattern.R
 import com.ljb.designpattern.databinding.ActivityPatternsBinding
 import com.ljb.extension.UiState
 import com.ljb.extension.setVisibility
 import com.ljb.extension.showToast
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MvpActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patterns), MvpContract.View {
@@ -27,11 +26,13 @@ class MvpActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patte
 
         //검색을 완료 하였을 경우 (키보드 '검색' 돋보기 버튼을 선택 하였을 경우)
         override fun onQueryTextSubmit(query: String?): Boolean {
-            lifecycleScope.launch(Dispatchers.IO){
-                if (query != null) {
+
+            if (query != null) {
+                lifecycleScope.launch{
                     presenter.loadData(query)
                 }
             }
+
             //return false   //키보드 내림
             return true     //키보드 내리지 않음
         }
@@ -56,18 +57,18 @@ class MvpActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patte
             recycler.addItemDecoration(NewsDecoration())
         }
 
-        lifecycleScope.launch(Dispatchers.IO){
+        lifecycleScope.launch{
             presenter.loadData("안드로이드")
         }
     }
 
-    override fun setData(uiState: UiState<NewsResponse>) {
+    override fun setData(uiState: UiState<List<NewsData>>) {
         when (uiState) {
             is UiState.Complete, is UiState.Empty, is UiState.Fail -> {
                 binding.progressCircular.setVisibility(false)
 
                 if (uiState is UiState.Complete){
-                    newsAdapter.submitList(uiState.data.items)
+                    newsAdapter.submitList(uiState.data)
                     binding.searchView.clearFocus()
                 }
 

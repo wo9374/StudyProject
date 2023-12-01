@@ -7,8 +7,12 @@ import android.text.Html
 import android.util.TypedValue
 import android.view.View
 import android.widget.Toast
-import com.ljb.designpattern.R
 
+
+sealed class NetworkState<out T> {
+    data class Success<out T>(val data: T) : NetworkState<T>()
+    data class Error(val message: String?) : NetworkState<Nothing>()
+}
 
 sealed class UiState<out T> {
     data object Empty : UiState<Nothing>()
@@ -16,6 +20,13 @@ sealed class UiState<out T> {
     data class Complete<out T>(val data: T) : UiState<T>()
     data class Fail(val message: String?) : UiState<Nothing>()
 }
+
+//List<T> 가 비어 있는지 확인 후 UiState Complete 와 Empty 지정
+fun <T> checkEmptyData(list: List<T>) : UiState<List<T>> =
+    if (list.isEmpty())
+        UiState.Empty
+    else
+        UiState.Complete(list)
 
 fun String.htmlToString() : String {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)

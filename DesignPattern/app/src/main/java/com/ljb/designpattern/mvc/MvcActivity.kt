@@ -7,19 +7,23 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.ljb.base.BaseActivity
 import com.ljb.designpattern.NewsAdapter
+import com.ljb.designpattern.NewsData
 import com.ljb.designpattern.NewsDecoration
 import com.ljb.designpattern.NewsRepository
-import com.ljb.designpattern.NewsResponse
 import com.ljb.designpattern.R
 import com.ljb.designpattern.databinding.ActivityPatternsBinding
+import com.ljb.extension.NetworkState
 import com.ljb.extension.UiState
+import com.ljb.extension.checkEmptyData
 import com.ljb.extension.setVisibility
 import com.ljb.extension.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patterns) {
 
@@ -28,21 +32,16 @@ class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
 
     private val newsAdapter = NewsAdapter()
 
-    private var _newsList = MutableStateFlow<UiState<NewsResponse>>(UiState.Loading)
-    private val newsList: StateFlow<UiState<NewsResponse>> get() = _newsList
+    private var _newsList = MutableStateFlow<UiState<List<NewsData>>>(UiState.Loading)
+    private val newsList: StateFlow<UiState<List<NewsData>>> get() = _newsList
 
     private val queryTextListener = object : OnQueryTextListener {
 
         //검색을 완료 하였을 경우 (키보드 '검색' 돋보기 버튼을 선택 하였을 경우)
         override fun onQueryTextSubmit(query: String?): Boolean {
-            lifecycleScope.launch(Dispatchers.IO){
-                if (query != null) {
-                    _newsList.emit(UiState.Loading)
-                    newsRepository.getSearchNews(query).collectLatest {
-                        _newsList.emit(it)
-                    }
-                }
-            }
+            if (query != null)
+                searchNews(query)
+
             //return false   //키보드 내림
             return true     //키보드 내리지 않음
         }
@@ -70,12 +69,7 @@ class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
         observeData()
 
         //초기 "안드로이드" 검색
-        lifecycleScope.launch(Dispatchers.IO){
-            _newsList.emit(UiState.Loading)
-            newsRepository.getSearchNews("안드로이드").collectLatest {
-                _newsList.emit(it)
-            }
-        }
+        searchNews("안드로이드")
     }
 
     private fun observeData() = lifecycleScope.launch {
@@ -86,7 +80,7 @@ class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
                         binding.progressCircular.setVisibility(false)
 
                         if (uiState is UiState.Complete){
-                            newsAdapter.submitList(uiState.data.items)
+                            newsAdapter.submitList(uiState.data)
                             binding.searchView.clearFocus()
                         }
 
@@ -100,5 +94,19 @@ class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
                     else -> binding.progressCircular.setVisibility(true)
                 }
             }
+    }
+
+    fun searchNews(query: String) = lifecycleScope.launch {
+        _newsList.emit(UiState.Loading)
+
+        newsRepository.getSearchNews(query).flowOn(Dispatchers.IO).collectLatest { networkState->
+            when(networkState){
+                is NetworkState.Success ->
+                    _newsList.emit(checkEmptyData(networkState.data))
+
+                is NetworkState.Error ->
+                    _newsList.emit(UiState.Fail(networkState.message))
+            }
+        }
     }
 }

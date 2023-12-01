@@ -1,11 +1,13 @@
 package com.ljb.designpattern.mvp
 
+import com.ljb.designpattern.NewsData
 import com.ljb.designpattern.NewsRepository
-import com.ljb.designpattern.NewsResponse
+import com.ljb.extension.NetworkState
 import com.ljb.extension.UiState
+import com.ljb.extension.checkEmptyData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flowOn
 
 class MvpPresenter(
     private val view: MvpContract.View,
@@ -13,14 +15,15 @@ class MvpPresenter(
 ) : MvpContract.Presenter {
 
     override suspend fun loadData(query: String) {
+        view.setData(UiState.Loading)
 
-        withContext(Dispatchers.Main){
-            view.setData(UiState.Loading)
-        }
+        newsRepository.getSearchNews(query).flowOn(Dispatchers.IO).collectLatest { networkState->
+            when(networkState){
+                is NetworkState.Success ->
+                    view.setData(checkEmptyData(networkState.data))
 
-        newsRepository.getSearchNews(query).collectLatest {
-            withContext(Dispatchers.Main){
-                view.setData(it)
+                is NetworkState.Error ->
+                    view.setData(UiState.Fail(networkState.message))
             }
         }
     }
@@ -28,7 +31,7 @@ class MvpPresenter(
 
 interface MvpContract {
     interface View {
-        fun setData(uiState: UiState<NewsResponse>)
+        fun setData(uiState: UiState<List<NewsData>>)
     }
 
     interface Presenter {
