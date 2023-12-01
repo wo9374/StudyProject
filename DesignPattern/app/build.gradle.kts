@@ -75,4 +75,10 @@ dependencies {
     //OkHttp
     //implementation ("com.squareup.okhttp3:okhttp:${rootProject.extra["okhttp_version"]}")
     implementation ("com.squareup.okhttp3:logging-interceptor:${rootProject.extra["okhttp_version"]}")      //요청, 응답 정보 기록
+
+    //Activity ktx
+    implementation ("androidx.activity:activity-ktx:1.8.1")
+
+    implementation("org.orbit-mvi:orbit-core:6.1.0")
+    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
 }

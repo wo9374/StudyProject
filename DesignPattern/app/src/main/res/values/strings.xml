@@ -8,4 +8,5 @@
 
     <string name="query_hint">검색어를 입력하세요.</string>
     <string name="result_empty">검색결과가 없습니다.</string>
+    <string name="result_success">검색 완료</string>
 </resources>
