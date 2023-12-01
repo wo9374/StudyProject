@@ -11,7 +11,10 @@ import android.widget.Toast
 
 sealed class NetworkState<out T> {
     data class Success<out T>(val data: T) : NetworkState<T>()
-    data class Error(val message: String?) : NetworkState<Nothing>()
+    data class Error(
+        val message: String?,
+        val errorCode: Int,
+    ) : NetworkState<Nothing>()
 }
 
 sealed class UiState<out T> {

@@ -14,8 +14,9 @@ class NewsRepository{
                 body()?.let { response ->
                     emit(NetworkState.Success(response.items))
                 }
-            } else
-                emit(NetworkState.Error(message()))
+            } else{
+                emit(NetworkState.Error(message(), code()) )
+            }
         }
     }
 }
