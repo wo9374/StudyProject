@@ -10,7 +10,7 @@
 
 ### MVC
 
-<img width="650" height= "250" src="https://github.com/wo9374/StudyProject/assets/55440637/50d05422-406a-4c6c-ad23-5b07258366f4">
+<img width="750" height= "350" src="https://github.com/wo9374/StudyProject/assets/55440637/50d05422-406a-4c6c-ad23-5b07258366f4">
 
 Model
 - 어플리케이션에 사용되는 데이터와 처리 로직이 담김
@@ -26,7 +26,7 @@ Controller
 &nbsp;
 #### Android에서는 View와 Controller가 Activity에 포함
 #### 이러한 문제점 때문에 Activity에 코드들이 몰리는 현상이 발생
-<img width="650" height="450" alt="mvc_2" src="https://github.com/wo9374/StudyProject/assets/55440637/0a616ee2-79e3-4a06-8198-c544c46ef779">
+<img width="750" height="450" alt="mvc_2" src="https://github.com/wo9374/StudyProject/assets/55440637/0a616ee2-79e3-4a06-8198-c544c46ef779">
 
 장점
 - 구현이 쉽고, 이해하기 쉬우며, 구현 속도도 가장 빠름
@@ -44,7 +44,7 @@ MVP의 특징은 Activity가 View의 역할만 수행
 
 Android에 있어서 MVP는 컴포넌트 분리가 좀더 명확하게 이루어 짐
 
-<img width="650" height= "350" src="https://github.com/wo9374/StudyProject/assets/55440637/e4149ed6-896b-4959-9c09-069b99740538">
+<img width="750" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/e4149ed6-896b-4959-9c09-069b99740538">
 
 Model
 - MVC의 모델과 동일
@@ -55,7 +55,7 @@ View (UI)
 Presenter
 - Controller과 같은 역할을 하나, Interface로 이루어져 UnitTest에 자유로움
 
-<img width="650" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/34340b34-f0f5-443d-9b0e-7f7691aa80b2">
+<img width="750" height= "450" src="https://github.com/wo9374/StudyProject/assets/55440637/34340b34-f0f5-443d-9b0e-7f7691aa80b2">
 
 이제 Activity단에서 바로 Model을 호출하는 것이 아닌, Presenter에서 View로 전달
 
@@ -80,7 +80,7 @@ MVVM은 presenter에 의존하지 않고, Observer pattern을 이용해 객체�
 > 상태 변화가 있을 때마다 메서드를 통하여 관찰 대상자가 직접 옵저버들에게 통지하여 상태를 동기화할 수 있도록 하는 디자인 패턴을 의미<br>
 > 즉, 객체에 변화가 일어날 때마다 콜백이 일어나게 됨
 
-<img width="650" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/1fdf4e18-61fb-4d12-af5d-60b2afc8b6d2">
+<img width="750" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/1fdf4e18-61fb-4d12-af5d-60b2afc8b6d2">
 
 Model
 - MVC의 모델과 동일
@@ -93,7 +93,7 @@ ViewModel
 MVVM의 가장 큰 특징은 View가 어떤 종속성도 가지지 않았다는 것  
 그래서 ViewModel을 다른 View에서도 활용이 가능
 
-<img width="650" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/965616c1-4428-4b5a-8563-d0ea4a38df3f">
+<img width="750" height= "450" src="https://github.com/wo9374/StudyProject/assets/55440637/965616c1-4428-4b5a-8563-d0ea4a38df3f">
 
 장점
 - View와 Model이 독립
@@ -129,14 +129,14 @@ MVVM에서 해결하지 못하는 상태 문제와 부수 효과 문제가 제�
 > 예를 들어 네트워크 통신 때 데이터를 가져오는 함수는 데이터를 못 가져올 수도 있다.<br>
 > function add(a, b){a+b+c}는 a와 b를 더한 값의 예상과 다르게 c 때문에 값이 변경될 수도 있다.<br>
 
-<img width="350" height= "700" src="https://github.com/wo9374/StudyProject/assets/55440637/560907ae-4d7b-4d01-97aa-5e7f4fb513c4">
+<img width="300" height= "600" src="https://github.com/wo9374/StudyProject/assets/55440637/560907ae-4d7b-4d01-97aa-5e7f4fb513c4">
 
 데이터가 로딩되었음에도, 프로그레스 바가 돌고 있다.
 MVVM으로 구현하면서 ViewModel에서 상태를 관리하게 되는데 여러 데이터를 분산하다 보니 관리 포인트가 불가피하게 늘어나고, 버그가 발생  
 
 #### 데이터의 흐름을 제어하지 못하는 것이 문제였기 때문에 MVI는 단일 상태 관리와 단방향 데이터 흐름을 통해 MVVM의 문제점을 해결하고자 함
 
-<img width="650" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/343bfdc9-5b4c-4ff7-9f73-af2259ab6c80">
+<img width="750" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/343bfdc9-5b4c-4ff7-9f73-af2259ab6c80">
 
 위 그림과 같이 단방향으로 흐르는 구조
 
@@ -160,7 +160,7 @@ MVI는 이러한 문제를 SideEffect를 통해 제어
 > 백그라운드 작업, 액티비티 전환과 같은 부수적인 작업을 의미<br>
 > Android 하단 알림 바 Toast또한 SideEffect로 보는 경우가 많다<br>
 
-<img width="650" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/225a3839-2c2e-45bf-8ea5-e732806b99e7">
+<img width="750" height= "400" src="https://github.com/wo9374/StudyProject/assets/55440637/225a3839-2c2e-45bf-8ea5-e732806b99e7">
 
 MVI는 MVP, MVVM과 다르게 I가 실제 컴포넌트를 지칭하지 않음  
 어떤 구조로 만들자는 의미 보다는 어떻게 데이터와 상태의 흐름을 어떻게 다룰 것이냐는 패러다임에 가까움  
