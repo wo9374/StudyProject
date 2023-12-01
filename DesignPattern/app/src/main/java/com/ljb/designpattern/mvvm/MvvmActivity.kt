@@ -27,10 +27,8 @@ class MvvmActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
     private val queryTextListener = object : SearchView.OnQueryTextListener {
 
         override fun onQueryTextSubmit(query: String?): Boolean {
-            lifecycleScope.launch(Dispatchers.IO){
-                if (query != null)
-                    viewModel.getNews(query)
-            }
+            if (query != null)
+                viewModel.getNews(query)
             return true     //키보드 내리지 않음
         }
 
@@ -51,9 +49,7 @@ class MvvmActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
 
             observeData()
 
-            lifecycleScope.launch {
-                viewModel.getNews("안드로이드")
-            }
+            viewModel.getNews("안드로이드")
         }
     }
 
@@ -68,6 +64,7 @@ class MvvmActivity: BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
                         if (uiState is UiState.Complete){
                             newsAdapter.submitList(uiState.data)
                             binding.searchView.clearFocus()
+                            showToast(getString(R.string.result_success))
                         }
 
                         if (uiState is UiState.Empty)

@@ -82,6 +82,7 @@ class MvcActivity : BaseActivity<ActivityPatternsBinding>(R.layout.activity_patt
                         if (uiState is UiState.Complete){
                             newsAdapter.submitList(uiState.data)
                             binding.searchView.clearFocus()
+                            showToast(getString(R.string.result_success))
                         }
 
                         if (uiState is UiState.Empty)
