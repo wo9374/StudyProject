@@ -1,5 +1,6 @@
 package com.ljb.ktor
 
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -8,14 +9,14 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class NewsApi{
-    suspend fun getNews(query: String) : HttpResponse = ktorClient.get{
+class NewsApi(private val client: HttpClient){
+    suspend fun getNews(query: String) : HttpResponse = client.get{
         parameter("query", query)
     }
 }
 
 class NewRepository{
-    val newsApi = NewsApi()
+    private val newsApi = NewsApi(ktorClient)
 
     suspend fun getSearchNews(query: String): Flow<NetworkState<List<NewsData>>> = flow{
         try {
