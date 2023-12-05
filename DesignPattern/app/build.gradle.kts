@@ -66,19 +66,12 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    //Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:${rootProject.extra["retrofit_version"]}")
-    implementation ("com.squareup.retrofit2:converter-gson:${rootProject.extra["retrofit_version"]}")       //Gson 처리시
-    implementation ("com.squareup.retrofit2:converter-jaxb:${rootProject.extra["retrofit_version"]}")       //XML 처리시
-    implementation ("com.squareup.retrofit2:converter-scalars:${rootProject.extra["retrofit_version"]}")    //String 처리시
+    implementation(Lib.Retrofit.core)
+    implementation(Lib.Retrofit.gson)
+    implementation(Lib.OkHttp.interceptor)
 
-    //OkHttp
-    //implementation ("com.squareup.okhttp3:okhttp:${rootProject.extra["okhttp_version"]}")
-    implementation ("com.squareup.okhttp3:logging-interceptor:${rootProject.extra["okhttp_version"]}")      //요청, 응답 정보 기록
-
-    //Activity ktx
-    implementation ("androidx.activity:activity-ktx:1.8.1")
-
-    implementation("org.orbit-mvi:orbit-core:6.1.0")
-    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
+    implementation(Lib.Activity.ktx)
+    
+    implementation(Lib.Orbit.core)
+    implementation(Lib.Orbit.viewModel)
 }

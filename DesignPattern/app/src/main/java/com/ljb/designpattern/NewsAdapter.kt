@@ -1,12 +1,11 @@
 package com.ljb.designpattern
 
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.ljb.designpattern.databinding.ItemNewsBinding
 import com.ljb.extension.htmlToString
 

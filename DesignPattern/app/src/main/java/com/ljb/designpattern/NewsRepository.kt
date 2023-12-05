@@ -1,7 +1,6 @@
 package com.ljb.designpattern
 
 import com.ljb.extension.NetworkState
-import com.ljb.extension.UiState
 import com.ljb.network.RetrofitService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
