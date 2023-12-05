@@ -2,6 +2,7 @@ package com.ljb.unittest.local_3
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import com.ljb.unittest.NewsData
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
