@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+//https://onlyfor-me-blog.tistory.com/519
 
 /**
  * Preferences DataStore 구현
