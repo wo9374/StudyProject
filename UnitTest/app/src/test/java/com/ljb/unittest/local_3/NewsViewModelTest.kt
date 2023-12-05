@@ -11,6 +11,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+/**
+ * 로컬 단위 테스트 (Android 와 관련 없이 JVM 만 필요한 테스트, 알고리즘 테스트 등등)
+ *
+ * ViewModel + LiveData + 비동기로 데이터 불러오는 함수 테스트 + getOrAwaitValue() + Mockito + Junit4 + Truth
+ * */
 class NewsViewModelTest{
 
     @get:Rule
