@@ -1,6 +1,15 @@
 import Versions.dataStore
+import Versions.hilt
+import Versions.liveData
+import Versions.room
+import Versions.ktor
+import Versions.okHttp
+import Versions.orBit
+import Versions.retrofit
 
 object Versions {
+    const val hilt ="2.49"
+
     const val ksp = "1.9.21-1.0.15"
 
     const val dataStore = "1.0.0"
@@ -38,12 +47,12 @@ object Libs {
     }
 
     object Ktor{
-        const val core = "io.ktor:ktor-client-android:${ktor}"
-        const val cio = "io.ktor:ktor-client-cio:${ktor}"                          //JVM, Android 및 Native 플랫폼에서 사용할 수 있는 완전 비동기식 코루틴 기반 엔진
-        const val logging = "io.ktor:ktor-client-logging-jvm:${ktor}"              //HTTP Request을 로깅하기 위해 사용
-        const val contentNegotiation = "io.ktor:ktor-client-content-negotiation:${ktor}"  //직렬화/역직렬화를 위한 ContentNegotiation
-        const val serializationJson = "io.ktor:ktor-serialization-kotlinx-json:${ktor}"    //Serialization json
-        const val serializationXml = "io.ktor:ktor-serialization-kotlinx-xml:${ktor}"      //Serialization XML
+        const val core = "io.ktor:ktor-client-android:$ktor"
+        const val cio = "io.ktor:ktor-client-cio:$ktor"                          //JVM, Android 및 Native 플랫폼에서 사용할 수 있는 완전 비동기식 코루틴 기반 엔진
+        const val logging = "io.ktor:ktor-client-logging-jvm:$ktor"              //HTTP Request을 로깅하기 위해 사용
+        const val contentNegotiation = "io.ktor:ktor-client-content-negotiation:$ktor"  //직렬화/역직렬화를 위한 ContentNegotiation
+        const val serializationJson = "io.ktor:ktor-serialization-kotlinx-json:$ktor"    //Serialization json
+        const val serializationXml = "io.ktor:ktor-serialization-kotlinx-xml:$ktor"      //Serialization XML
     }
 
     object Serialization{
@@ -66,5 +75,12 @@ object Libs {
     object Orbit{
         const val core = "org.orbit-mvi:orbit-core:$orBit"
         const val viewModel = "org.orbit-mvi:orbit-viewmodel:$orBit"
+    }
+
+    object Dagger{
+        object Hilt{
+            const val core = "com.google.dagger:hilt-android:$hilt"
+            const val compiler = "com.google.dagger:hilt-android-compiler:$hilt"
+        }
     }
 }
