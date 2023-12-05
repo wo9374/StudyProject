@@ -6,18 +6,18 @@ class FakeNewsRepository : NewsRepository {
     private val news = mutableListOf<NewsData>()
 
     init {
-        news.add(NewsData("overview1","","","",""))
-        news.add(NewsData("overview2","","","",""))
+        news.add(NewsData(0,"overview1","","","",""))
+        news.add(NewsData(1,"overview2","","","",""))
     }
 
-    override fun getNews(): List<NewsData> {
+    override suspend fun getNews(): List<NewsData> {
         return news
     }
 
-    override fun updateNews(): List<NewsData> {
+    override suspend fun updateNews(): List<NewsData> {
         news.clear()
-        news.add(NewsData("overview3","","","",""))
-        news.add(NewsData("overview4","","","",""))
+        news.add(NewsData(2,"overview3","","","",""))
+        news.add(NewsData(3,"overview4","","","",""))
         return news
     }
 }
