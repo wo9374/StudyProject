@@ -4,7 +4,7 @@ object Versions {
     const val dataStore = "1.0.0"
 }
 
-object Libs {
+object Lib {
     object DataStore{
         const val preferencesStore = "androidx.datastore:datastore-preferences:$dataStore"
         const val protoStore = "androidx.datastore:datastore:$dataStore"
