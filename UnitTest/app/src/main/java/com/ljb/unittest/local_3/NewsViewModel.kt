@@ -3,6 +3,7 @@ package com.ljb.unittest.local_3
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ljb.unittest.NewsData
 
 class NewsViewModel(
     private val newsRepository: NewsRepository
@@ -19,15 +20,6 @@ class NewsViewModel(
          return _newsList
     }
 }
-
-
-data class NewsData(
-    val title: String,
-    val originallink: String,
-    val link: String,
-    val description: String,
-    val pubDate: String,
-)
 
 
 // Service 가 있다고 가정한 NewsRepository

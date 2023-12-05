@@ -1,5 +1,7 @@
 package com.ljb.unittest.local_3
 
+import com.ljb.unittest.NewsData
+
 class FakeNewsRepository : NewsRepository {
     private val news = mutableListOf<NewsData>()
 
