@@ -25,7 +25,7 @@ object Versions {
     const val orBit = "6.1.0"
 }
 
-object Libs {
+object Lib {
 
     object DataStore{
         const val preferencesStore = "androidx.datastore:datastore-preferences:$dataStore"
