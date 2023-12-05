@@ -63,13 +63,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    //Ktor
-    implementation("io.ktor:ktor-client-android:${rootProject.extra["ktor_version"]}")
-    implementation("io.ktor:ktor-client-cio:${rootProject.extra["ktor_version"]}")                  //JVM, Android 및 Native 플랫폼에서 사용할 수 있는 완전 비동기식 코루틴 기반 엔진
-    implementation("io.ktor:ktor-client-logging-jvm:${rootProject.extra["ktor_version"]}")          //HTTP Request을 로깅하기 위해 사용
-    implementation("io.ktor:ktor-client-content-negotiation:${rootProject.extra["ktor_version"]}")  //직렬화/역직렬화를 위한 ContentNegotiation
-    implementation("io.ktor:ktor-serialization-kotlinx-json:${rootProject.extra["ktor_version"]}")  //Serialization json
-    //implementation("io.ktor:ktor-serialization-kotlinx-xml:${rootProject.extra["ktor_version"]}")   //Serialization XML
-
-    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.21")           //Multi Platform Serialization
+    implementation(Lib.Ktor.core)
+    implementation(Lib.Ktor.cio)
+    implementation(Lib.Ktor.logging)
+    implementation(Lib.Ktor.contentNegotiation)
+    implementation(Lib.Ktor.serializationJson)
 }
