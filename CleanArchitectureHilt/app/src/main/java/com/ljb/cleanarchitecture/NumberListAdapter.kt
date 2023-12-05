@@ -5,19 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ljb.domain.model.NumberModel
 import com.ljb.cleanarchitecture.databinding.ItemNumberBinding
+import com.ljb.domain.model.NumberModel
 
 /**
  * RecyclerView에 설정해줄 Adatper의 구현 클래스
  */
-class NumberListAdapter : ListAdapter<NumberModel, NumberListAdapter.NumberViewHolder>(NumberDiffUtil()) {
-
-    inner class NumberViewHolder(private val binding: ItemNumberBinding) : RecyclerView.ViewHolder(binding.root) {
-        internal fun binding(item: NumberModel) {
-            binding.tvNumber.text = item.value.toString()
-        }
-    }
+class NumberListAdapter : ListAdapter<NumberModel, NumberViewHolder>(NumberDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumberViewHolder {
         val binding = ItemNumberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,6 +23,12 @@ class NumberListAdapter : ListAdapter<NumberModel, NumberListAdapter.NumberViewH
     }
 
     override fun getItemId(position: Int): Long = getItem(position).id.toLong()
+}
+
+class NumberViewHolder(private val binding: ItemNumberBinding) : RecyclerView.ViewHolder(binding.root) {
+    internal fun binding(item: NumberModel) {
+        binding.tvNumber.text = item.value.toString()
+    }
 }
 
 /**

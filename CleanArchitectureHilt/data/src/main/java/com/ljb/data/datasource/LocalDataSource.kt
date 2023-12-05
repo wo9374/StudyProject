@@ -16,8 +16,8 @@ class LocalDataSourceImpl @Inject constructor(private val dao: NumbersDao): Loca
         return dao.getNumbers()
     }
 
-    override suspend fun insertNumber(number: NumberEntity) {
-        dao.insertNumber(number)
+    override suspend fun insertNumber(numberEntity: NumberEntity) {
+        dao.insertNumber(numberEntity)
     }
 
     override suspend fun clearNumbers() {
