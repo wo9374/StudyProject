@@ -3,6 +3,6 @@ object Versions {
 }
 
 object Libs {
-    const val preferences = "androidx.datastore:datastore-preferences:${Versions.dataStore}"
-    const val preferencesCore = "androidx.datastore:datastore-preferences-core:${Versions.dataStore}"
+    const val preferencesStore = "androidx.datastore:datastore-preferences:${Versions.dataStore}"
+    const val preferencesStoreCore = "androidx.datastore:datastore-preferences-core:${Versions.dataStore}"
 }
