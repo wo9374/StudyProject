@@ -44,7 +44,6 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-
     //로컬 테스트 (test)
     testImplementation("junit:junit:4.13.2") //default
     testImplementation("com.google.truth:truth:1.1.5")
@@ -56,7 +55,14 @@ dependencies {
     //계측 테스트 (androidTest)
     androidTestImplementation("androidx.test.ext:junit:1.1.5")              //default
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") //default
+    androidTestImplementation("com.google.truth:truth:1.1.5")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+
+    //Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 }
