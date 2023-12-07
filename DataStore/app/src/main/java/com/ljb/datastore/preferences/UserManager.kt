@@ -25,6 +25,10 @@ class UserManager(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun clearUser(){
+        dataStore.edit { it.clear() }
+    }
+
     /**
      * 저장될 값들의 키를 정의하는 함수
      *

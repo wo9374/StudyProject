@@ -82,14 +82,14 @@
         android:layout_marginTop="16dp"
         android:text="성별 남/여 "
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/btn_preference"
+        app:layout_constraintBottom_toTopOf="@id/btn_save"
         app:layout_constraintEnd_toEndOf="@id/et_age"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/et_age"
         app:layout_constraintTop_toBottomOf="@id/et_age" />
 
     <Button
-        android:id="@+id/btn_preference"
+        android:id="@+id/btn_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -102,6 +102,18 @@
         app:layout_constraintEnd_toEndOf="@id/switch_gender"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/switch_gender"
+        app:layout_constraintTop_toBottomOf="@id/switch_gender" />
+
+    <Button
+        android:id="@+id/btn_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="18dp"
+        android:text="Clear"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/switch_gender"
         app:layout_constraintTop_toBottomOf="@id/switch_gender" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

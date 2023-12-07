@@ -8,26 +8,34 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
-import com.ljb.datastore.databinding.ActivityPreferencesBinding
+import com.ljb.datastore.databinding.ActivityDatastoreBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-//https://onlyfor-me-blog.tistory.com/519
-
 /**
  * Preferences DataStore 구현
+ * https://onlyfor-me-blog.tistory.com/519
  * */
+
+
+/**
+ * by keyword 사용 DataStore<Preferences> 구현
+ * preferencesDataStore()에 맡기는 Context 확장 Property
+ *
+ * 하위에 타입 별로 DataStore 에 저장하거나 가져오는 함수를 구현해도 되지만 여기선 이것만 사용한다.
+ * */
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 class PreferencesActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityPreferencesBinding
+    private lateinit var binding: ActivityDatastoreBinding
 
     private lateinit var userManager: UserManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPreferencesBinding.inflate(layoutInflater)
+        binding = ActivityDatastoreBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         userManager = UserManager(dataStore)
@@ -38,7 +46,7 @@ class PreferencesActivity : AppCompatActivity() {
 
     private fun setUi() {
         binding.apply {
-            btnPreference.setOnClickListener {
+            btnSave.setOnClickListener {
                 val name = etName.text.toString()
                 val age = etAge.text.toString().toIntOrNull()
                 val isMale = switchGender.isChecked
@@ -46,42 +54,35 @@ class PreferencesActivity : AppCompatActivity() {
                 if (name.isEmpty() || age == null) {
                     showToast("이름과 나이를 모두 입력하세요")
                 } else {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        userManager.storeUser(age, name, isMale)
-                    }
+                    CoroutineScope(Dispatchers.IO).launch { userManager.storeUser(age, name, isMale) }
                 }
+            }
+
+            btnClear.setOnClickListener {
+                CoroutineScope(Dispatchers.IO).launch { userManager.clearUser() }
             }
         }
     }
 
     private fun observeData() = lifecycleScope.launch {
         launch {
-            userManager.userAgeFlow.collectLatest {
-                it?.let { binding.tvAge.text = it.toString() }
-            }
+            userManager.userAgeFlow.collectLatest { binding.tvAge.text = it?.toString() ?: "" }
         }
 
         launch {
-            userManager.userNameFlow.collectLatest {
-                it?.let { binding.tvName.text = it }
-            }
+            userManager.userNameFlow.collectLatest { binding.tvName.text = it ?: "" }
         }
 
         launch {
             userManager.userGenderFlow.collectLatest {
-                it?.let { binding.tvGender.text = if (it) "여성" else "남성" }
+                val gender = it?.let {
+                    if (it) "여성" else "남성"
+                } ?: ""
+                binding.tvGender.text = gender
             }
         }
     }
 }
-
-/**
- * by keyword 사용 DataStore<Preferences> 구현
- * preferencesDataStore()에 맡기는 Context 확장 Property
- *
- * 하위에 타입 별로 DataStore 에 저장하거나 가져오는 함수를 구현해도 되지만 여기선 이것만 사용한다.
- * */
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
 fun Context.showToast(str: String?) {
     Toast.makeText(this, str, Toast.LENGTH_SHORT).show()
