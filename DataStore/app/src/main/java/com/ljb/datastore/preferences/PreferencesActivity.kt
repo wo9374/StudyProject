@@ -4,9 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
 import com.ljb.datastore.databinding.ActivityDatastoreBinding
 import kotlinx.coroutines.CoroutineScope
@@ -16,17 +13,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Preferences DataStore 구현
- * https://onlyfor-me-blog.tistory.com/519
  * */
-
-
-/**
- * by keyword 사용 DataStore<Preferences> 구현
- * preferencesDataStore()에 맡기는 Context 확장 Property
- *
- * 하위에 타입 별로 DataStore 에 저장하거나 가져오는 함수를 구현해도 되지만 여기선 이것만 사용한다.
- * */
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 class PreferencesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDatastoreBinding

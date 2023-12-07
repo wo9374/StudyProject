@@ -1,13 +1,19 @@
 package com.ljb.datastore.preferences
 
+import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+
+/**
+ * by keyword 사용 DataStore<Preferences> 구현
+ * preferencesDataStore()에 맡기는 Context 확장 Property
+ *
+ * 하위에 타입 별로 DataStore 에 저장하거나 가져오는 함수를 구현해도 되지만 여기선 이것만 사용한다.
+ * */
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
 class UserManager(private val dataStore: DataStore<Preferences>) {
     companion object {
