@@ -1,6 +1,6 @@
 import Versions.dataStore
 import Versions.hilt
-import Versions.liveData
+import Versions.lifeCycle
 import Versions.room
 import Versions.ktor
 import Versions.okHttp
@@ -16,7 +16,7 @@ object Versions {
 
     const val room = "2.6.1"
 
-    const val liveData = "2.6.2"
+    const val lifeCycle = "2.6.2"
 
     const val ktor = "2.3.6"
 
@@ -42,8 +42,9 @@ object Lib {
         const val ktx = "androidx.room:room-ktx:$room"
     }
 
-    object LiveData{
-        const val ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$liveData"
+    object Lifecycle{
+        const val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycle"
+        const val viewModel ="androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycle"
     }
 
     object Ktor{
