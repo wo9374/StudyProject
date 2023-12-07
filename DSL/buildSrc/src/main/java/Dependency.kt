@@ -23,6 +23,9 @@ object Versions {
     const val retrofit = "2.9.0"
     const val okHttp = "4.11.0"
     const val orBit = "6.1.0"
+
+    const val protoBufPlugin = "0.9.1"
+    const val protoBuf = "3.25.1"
 }
 
 object Lib {
@@ -87,5 +90,14 @@ object Lib {
 
     object Kotlin{
         const val coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    }
+
+    object Google{
+
+        object ProtoBuf{
+            const val kotlin = "com.google.protobuf:protobuf-kotlin-lite:$protoBuf"
+            const val java = "com.google.protobuf:protobuf-javalite:$protoBuf"
+            const val protoCompiler = "com.google.protobuf:protoc:$protoBuf"
+        }
     }
 }
