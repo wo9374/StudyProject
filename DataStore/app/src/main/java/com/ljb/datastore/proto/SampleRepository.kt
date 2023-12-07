@@ -9,14 +9,14 @@ class SampleRepository(private val sampleProtoDataStore: DataStore<Sample>) {
     val flow : Flow<Sample> = sampleProtoDataStore.data
 
     // 쓰기 및 수정
-    suspend fun setUserData(name:String, age:Int, gender: Boolean){
+    suspend fun setUserData(name:String, age:Int, gender: Sample.Gender, initData: Boolean){
         sampleProtoDataStore.updateData { sample ->
             sample
                 .toBuilder()
                 .setName(name)
                 .setAge(age)
                 .setGender(gender)
-                .setInitData(true)
+                .setInitData(initData)
                 .build()
         }
     }

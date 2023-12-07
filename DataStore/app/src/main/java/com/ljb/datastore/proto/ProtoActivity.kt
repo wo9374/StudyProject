@@ -45,12 +45,12 @@ class ProtoActivity : AppCompatActivity() {
             btnSave.setOnClickListener {
                 val name = etName.text.toString()
                 val age = etAge.text.toString().toIntOrNull()
-                val isMale = switchGender.isChecked
+                val isMale = if (switchGender.isChecked) Sample.Gender.FEMALE else Sample.Gender.MALE
 
                 if (name.isEmpty() || age == null) {
                     showToast("이름과 나이를 모두 입력하세요")
                 } else {
-                    CoroutineScope(Dispatchers.IO).launch { viewModel.setUserData(name, age, isMale) }
+                    CoroutineScope(Dispatchers.IO).launch { viewModel.setUserData(name, age, isMale, true) }
                 }
             }
 
@@ -66,7 +66,7 @@ class ProtoActivity : AppCompatActivity() {
                 binding.apply {
                     tvAge.text = sampleProto.age.toString()
                     tvName.text = sampleProto.name
-                    tvGender.text = if (sampleProto.gender) "여성" else "남성"
+                    tvGender.text = if (sampleProto.gender == Sample.Gender.MALE) "남성" else "여성"
                 }
             }else{
                 binding.apply {

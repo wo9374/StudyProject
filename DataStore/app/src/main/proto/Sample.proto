@@ -11,7 +11,13 @@ option java_multiple_files = true;
 message Sample {
   int32 age = 1;
   string name = 2;
-  bool gender = 3;
+
+  enum Gender {
+    MALE = 0;
+    FEMALE = 1;
+  }
+  Gender gender = 3;
+
   bool initData = 4;
 
   // 자료형을 선언, 그 안에 적절한 멤버 변수를 정의

@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 class ProtoViewModel(private val repository: SampleRepository) : ViewModel() {
     val flow: Flow<Sample> = repository.flow
 
-    fun setUserData(name:String, age:Int, gender: Boolean){
-        viewModelScope.launch { repository.setUserData(name, age, gender) }
+    fun setUserData(name:String, age:Int, gender: Sample.Gender, initData: Boolean){
+        viewModelScope.launch { repository.setUserData(name, age, gender, initData) }
     }
 
     fun clearUserData(){
