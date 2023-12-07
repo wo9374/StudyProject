@@ -1,6 +1,10 @@
+import com.google.protobuf.gradle.id
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
+    id("com.google.protobuf")
 }
 
 android {
@@ -39,6 +43,25 @@ android {
     }
 }
 
+protobuf {
+    protoc {
+        artifact = Lib.Google.ProtoBuf.protoCompiler
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins{
+                id("java"){ option("lite") }
+                //id("kotlin"){ option("lite") }
+            }
+            /*task.plugins {
+                create("grpc") {
+                    option("lite")
+                }
+            }*/
+        }
+    }
+}
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -50,4 +73,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation(Lib.DataStore.preferencesStore)
+
+    implementation(Lib.Google.ProtoBuf.java)
+    //implementation(Lib.Google.ProtoBuf.kotlin)
+
+    implementation(Lib.Activity.ktx)
 }
