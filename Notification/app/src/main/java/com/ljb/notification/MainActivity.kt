@@ -1,142 +1,125 @@
 package com.ljb.notification
 
 import android.Manifest
-import android.app.NotificationChannel
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.media.AudioAttributes
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import com.ljb.notification.databinding.ActivityMainBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     companion object {
         const val DENIED = "denied"
         const val EXPLAINED = "explained"
 
-        const val channelId = "one-channel"
-        const val channelName = "My One Channel"
-        const val notifyImportant = NotificationManager.IMPORTANCE_HIGH
+        const val commonNotification = 0
+        const val progressNotification = 1
     }
 
     private lateinit var binding: ActivityMainBinding
 
-    lateinit var manager: NotificationManager
-    lateinit var builder : NotificationCompat.Builder
+    private lateinit var manager: NotificationManager
+    private lateinit var builder: NotificationCompat.Builder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val pendingIntent = createPendingIntent(this)
+        manager.apply {
+            val silentChannel = createChannel(CHANNEL_ID_SILENT, "Silent", NotificationManager.IMPORTANCE_LOW)
+            val soundChannel = createChannel(CHANNEL_ID_SOUND, "Sound", NotificationManager.IMPORTANCE_DEFAULT)
+            val soundVibeChannel = createChannel(CHANNEL_ID_SOUND_VIBE, "SoundVibration", NotificationManager.IMPORTANCE_HIGH)
 
-
-        // SDK 26 이상은 notification 만들 때 channel 지정
-        builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = createChannel()
-            manager.createNotificationChannel(channel)
-            NotificationCompat.Builder(this, channelId)
-        } else {
-            NotificationCompat.Builder(this)
-        }.apply {
-            setSmallIcon(R.drawable.ic_launcher_foreground)
-            setWhen(System.currentTimeMillis())
-            setContentTitle("알림")
-            setContentText("알림 테스트")
-            setAutoCancel(false)        //전체 삭제해도 남아있게
-            setOngoing(true)            //알람이 계속 뜬 상태로 있게
-            setContentIntent(pendingIntent) // notification 클릭 시 pendingIntent 오픈
+            createNotificationChannel(silentChannel)
+            createNotificationChannel(soundChannel)
+            createNotificationChannel(soundVibeChannel)
         }
 
         binding.btnNotify.setOnClickListener {
             //sdk 33 이후 버전은 따로 권한 요청 필요
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 registerForActivityResult.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
-            }else{
-                manager.notify(0, builder.build())
+            } else {
+                setNotify()
             }
         }
     }
 
-    //MainActivity PendingIntent 생성해 return
-    private fun createPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).apply {
+    @SuppressLint("MissingPermission")
+    private fun setNotify() {
+        val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        return PendingIntent.getActivity(
-            context, 0, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-    }
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-    private fun createChannel() = NotificationChannel(channelId, channelName, notifyImportant).apply {
-        description = "My Channel One Description"
-        setShowBadge(true)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID_SOUND_VIBE)
+            .setNotificationInfo("알림", "그만하고 싶다", pendingIntent)
+            .addAction(R.drawable.ic_launcher_foreground, "Go to App", pendingIntent)
 
-        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val audio = AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .build()
-        setSound(uri, audio)
+        //일반 notification
+        manager.notify(commonNotification, builder.build())
 
-        enableLights(true)
-        lightColor = Color.RED
+        builder.setChannelId(CHANNEL_ID_SILENT)
+            .setNotificationInfo("알림", "다되면 다 사라져 줘", pendingIntent)
 
-        enableVibration(true)
-        vibrationPattern = longArrayOf(100, 200, 100, 200)
+        lifecycleScope.launch {
+            for (i in 1..100) {
+                builder.setProgress(100, i, false)
+                manager.notify(progressNotification, builder.build())
+                delay(100)
+            }
+
+            builder.setChannelId(CHANNEL_ID_SOUND_VIBE)
+            manager.notify(progressNotification, builder.build())
+
+            delay(2500)
+            //manager.cancel(commonNotification)
+            //manager.cancel(progressNotification)
+            manager.cancelAll()
+        }
     }
 
     // 권한 요청용 Activity Callback 객체
-    private val registerForActivityResult = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        val deniedPermissionList = permissions.filter { !it.value }.map { it.key }
-        when {
-            deniedPermissionList.isNotEmpty() -> {
-                val map = deniedPermissionList.groupBy { permission ->
-                    if (shouldShowRequestPermissionRationale(permission)) DENIED else EXPLAINED
-                }
-                map[DENIED]?.let {
-                    // 단순히 권한이 거부 되었을 때
-                    Toast.makeText(this, "권한이 거부 되어 기능 실행이 불가 합니다.", Toast.LENGTH_SHORT).show()
-                }
-                map[EXPLAINED]?.let {
-                    // 권한 요청이 완전히 막혔을 때(주로 앱 상세 창 열기)
-                    Toast.makeText(this, "권한이 거부 되어 기능 실행이 불가 합니다.", Toast.LENGTH_SHORT).show()
+    private val registerForActivityResult =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val deniedPermissionList = permissions.filter { !it.value }.map { it.key }
+            when {
+                deniedPermissionList.isNotEmpty() -> {
+                    val map = deniedPermissionList.groupBy { permission ->
+                        if (shouldShowRequestPermissionRationale(permission)) DENIED else EXPLAINED
+                    }
+                    map[DENIED]?.let {
+                        // 단순히 권한이 거부 되었을 때
+                        Toast.makeText(this, "권한이 거부 되어 기능 실행이 불가 합니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    map[EXPLAINED]?.let {
+                        // 권한 요청이 완전히 막혔을 때(주로 앱 상세 창 열기)
+                        Toast.makeText(this, "권한이 거부 되어 기능 실행이 불가 합니다.", Toast.LENGTH_SHORT).show()
 
-                    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                             putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.packageName)
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         }
-                    }else{
-                        Intent().apply {
-                            action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                            putExtra("app_package", applicationContext.packageName)
-                            putExtra("app_uid", applicationContext.applicationInfo.uid)
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
+                        startActivity(intent)
                     }
-                    startActivity(intent)
+                }
+
+                else -> {
+                    // 모든 권한이 허가 되었을 때
+                    setNotify()
                 }
             }
-            else -> {
-                // 모든 권한이 허가 되었을 때
-                manager.notify(0, builder.build())
-            }
         }
-    }
 }
