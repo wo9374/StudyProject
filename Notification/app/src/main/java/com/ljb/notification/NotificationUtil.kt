@@ -2,11 +2,14 @@ package com.ljb.notification
 
 import android.app.NotificationChannel
 import android.app.PendingIntent
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
 import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
 
 const val CHANNEL_ID_SILENT = "silent-channel"
 const val CHANNEL_ID_SOUND = "sound-channel"
@@ -33,7 +36,6 @@ fun NotificationCompat.Builder.setNotificationInfo(title: String, subText: Strin
 
 fun createChannel(channelId: String, channelName:String, importance: Int) : NotificationChannel
 = NotificationChannel(channelId, channelName,importance).apply{
-
     setShowBadge(true)
     enableLights(true)
     lightColor = Color.BLUE
