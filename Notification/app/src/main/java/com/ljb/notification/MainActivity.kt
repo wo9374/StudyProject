@@ -238,11 +238,11 @@ class MainActivity : AppCompatActivity() {
                     }
                     map[DENIED]?.let {
                         // 단순히 권한이 거부 되었을 때
-                        Toast.makeText(this@MainActivity, "알림 권한을 허용해 주세요.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "알림 기능 사용시 알림 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
                     }
                     map[EXPLAINED]?.let {
                         // 권한 요청이 완전히 막혔을 때(주로 앱 상세 창 열기)
-                        Toast.makeText(this@MainActivity, "알림 권한을 허용해 주세요.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "알림 기능 사용시 알림 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
 
                         val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                             putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.packageName)
