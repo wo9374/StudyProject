@@ -23,13 +23,12 @@ private val audio: AudioAttributes = AudioAttributes.Builder()
     .setUsage(AudioAttributes.USAGE_ALARM)
     .build()
 
-fun NotificationCompat.Builder.setNotificationInfo(title: String, subText: String, contentIntent: PendingIntent) : NotificationCompat.Builder {
+fun NotificationCompat.Builder.setNotificationInfo(title: String, subText: String) : NotificationCompat.Builder {
     setSmallIcon(R.drawable.ic_launcher_foreground)
     setWhen(System.currentTimeMillis())
 
     setContentTitle(title)
     setContentText(subText)
-    setContentIntent(contentIntent)
 
     return this
 }

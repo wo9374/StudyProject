@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
+import androidx.core.app.RemoteInput
 import androidx.lifecycle.lifecycleScope
 import com.ljb.notification.databinding.ActivityMainBinding
 import kotlinx.coroutines.delay
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             btnInbox.setOnClickListener { setOnClick(it) }
             btnMessage.setOnClickListener { setOnClick(it) }
             btnCustom.setOnClickListener { setOnClick(it) }
+            btnRemoteInput.setOnClickListener { setOnClick(it) }
         }
     }
 
@@ -99,7 +101,8 @@ class MainActivity : AppCompatActivity() {
                     btnBigTxt.id -> setBigTextNotification(pendingIntent)
                     btnInbox.id -> setInBoxNotification(pendingIntent)
                     btnMessage.id -> setMessageNotification(pendingIntent)
-                    btnCustom.id -> setCustomViewNotification()
+                    btnCustom.id -> setCustomViewNotification(pendingIntent)
+                    btnRemoteInput.id -> setRemoteInputNotification(pendingIntent)
                 }
             }
         }
@@ -117,7 +120,8 @@ class MainActivity : AppCompatActivity() {
         //NotificationCompat.Builder 이용 사용할 채널 ID 지정
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
-            .setNotificationInfo("Notification", "Default Notification", pendingIntent)
+            .setNotificationInfo("Notification", "Default Notification")
+            .setContentIntent(pendingIntent)
             .addAction(actionBuild)
             .setAutoCancel(true)    //알림 클릭시 지우기
             .setOngoing(true)       //알림 제거 막기 (전체 지우기 등등)
@@ -131,7 +135,8 @@ class MainActivity : AppCompatActivity() {
 
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_VIBE)
-            .setNotificationInfo("Progress", "Progress Notification", pendingIntent)
+            .setNotificationInfo("Progress", "Progress Notification")
+            .setContentIntent(pendingIntent)
             .setProgress(100, 0, false)
 
         NotificationManagerCompat
@@ -167,7 +172,8 @@ class MainActivity : AppCompatActivity() {
 
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
-            .setNotificationInfo("BigPicture", "BigPicture Notification", pendingIntent)
+            .setNotificationInfo("BigPicture", "BigPicture Notification")
+            .setContentIntent(pendingIntent)
             .setStyle(style)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -185,7 +191,8 @@ class MainActivity : AppCompatActivity() {
 
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
-            .setNotificationInfo("BigText", "BigText Notification", pendingIntent)
+            .setNotificationInfo("BigText", "BigText Notification")
+            .setContentIntent(pendingIntent)
             .setStyle(style)
             .setAutoCancel(true)
 
@@ -207,7 +214,8 @@ class MainActivity : AppCompatActivity() {
 
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
-            .setNotificationInfo("InBox", "InBox Notification", pendingIntent)
+            .setNotificationInfo("InBox", "InBox Notification")
+            .setContentIntent(pendingIntent)
             .setStyle(style)
             .setAutoCancel(true)
 
@@ -237,7 +245,8 @@ class MainActivity : AppCompatActivity() {
 
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
-            .setNotificationInfo("Message", "Message Notification", pendingIntent)
+            .setNotificationInfo("Message", "Message Notification")
+            .setContentIntent(pendingIntent)
             .setStyle(style)
             .setAutoCancel(true)
 
@@ -246,13 +255,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun setCustomViewNotification(){
+    private fun setCustomViewNotification(pendingIntent: PendingIntent){
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setWhen(System.currentTimeMillis())
-            .setContentTitle("Custom")
-            .setContentText("Custom Notification")
+            .setNotificationInfo("Custom", "Custom Notification")
+            .setContentIntent(pendingIntent)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(
                 RemoteViews(packageName, R.layout.custom_notiview).apply {
@@ -260,6 +267,44 @@ class MainActivity : AppCompatActivity() {
                     setTextViewText(R.id.txt_2, "테스트")
                 }
             )
+
+        NotificationManagerCompat
+            .from(this).notify(customNotification, builder.build())
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun setRemoteInputNotification(pendingIntent: PendingIntent){
+        //답장 전송시 수행할 Intent, PendingIntent
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        val remotePendingIntent = PendingIntent.getActivity(
+            applicationContext, 1, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE //RemoteInput 은 MUTABLE 필요
+        )
+
+        val keyTextReply = "key_text_reply"
+        val remoteInput = RemoteInput.Builder(keyTextReply)
+            .setLabel("답장을 입력하세요.")
+            .build()
+
+        val remoteInputAction= NotificationCompat
+            .Action
+            .Builder(R.drawable.ic_launcher_foreground, "답장", remotePendingIntent)
+            .addRemoteInput(remoteInput)
+            .build()
+
+        val person1 = Person.Builder().setName("Lee").build()
+        val msg1 = NotificationCompat.MessagingStyle.Message("Hi Kim", System.currentTimeMillis(), person1)
+        val style = NotificationCompat.MessagingStyle(person1).setConversationTitle("Greeting").addMessage(msg1)
+
+        val builder = NotificationCompat
+            .Builder(this, CHANNEL_ID_SOUND_VIBE)
+            .setNotificationInfo("Message", "Message Notification")
+            .setContentIntent(pendingIntent)
+            .setStyle(style)
+            .addAction(remoteInputAction)
+            .setAutoCancel(true)
 
         NotificationManagerCompat
             .from(this).notify(customNotification, builder.build())
