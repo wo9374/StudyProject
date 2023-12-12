@@ -44,9 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         //sdk 27 (Android 8) 이상은 채널을 만들고 지정 필요
         NotificationManagerCompat.from(this).apply {
-            val silentChannel = createChannel(CHANNEL_ID_SILENT, "Silent", NotificationManager.IMPORTANCE_LOW)
-            val vibeChannel = createChannel(CHANNEL_ID_VIBE, "Vibe", NotificationManager.IMPORTANCE_HIGH)
-            val soundVibeChannel = createChannel(CHANNEL_ID_SOUND_VIBE, "SoundVibration", NotificationManager.IMPORTANCE_HIGH)
+            val silentChannel = createChannel(CHANNEL_ID_SILENT, "채널1", NotificationManager.IMPORTANCE_LOW)
+            val vibeChannel = createChannel(CHANNEL_ID_VIBE, "채널2 진동", NotificationManager.IMPORTANCE_HIGH)
+            val soundVibeChannel = createChannel(CHANNEL_ID_SOUND_VIBE, "채널3 소리진동", NotificationManager.IMPORTANCE_HIGH)
 
             //NotificationManager 에 채널 생성, 이후 채널을 만들때 사용한 id로 알림 구분 지정
             createNotificationChannel(silentChannel)
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             registerForActivityResult.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
         }
         else {
-            //알림 클릭시 띄울 Intent
+            //알림 Touch 띄울 Intent
             val intent = Intent(
                 this@MainActivity, MainActivity::class.java
             ).apply { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         //최대 3개까지 유저 이벤트 액션 추가가 가능
         val actionBuild= NotificationCompat
             .Action
-            .Builder(R.drawable.ic_launcher_foreground, "Action", pendingIntent)
+            .Builder(R.drawable.ic_launcher_foreground, "확인", pendingIntent)
             .build()
 
         //NotificationCompat.Builder 이용 사용할 채널 ID 지정
@@ -115,6 +115,8 @@ class MainActivity : AppCompatActivity() {
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
             .setNotificationInfo("Notification", "Default Notification", pendingIntent)
             .addAction(actionBuild)
+            .setAutoCancel(true)    //알림 클릭시 지우기
+            .setOngoing(true)       //알림 제거 막기 (전체 지우기 등등)
 
         NotificationManagerCompat
             .from(this).notify(commonNotify, builder.build())
@@ -141,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 delay(100)
             }
 
-            //Progress 완료시 사운드 진동 알림 한번더
+            //Progress 완료시 사운드 진동 알림
             builder.setChannelId(CHANNEL_ID_SOUND_VIBE)
             NotificationManagerCompat
                 .from(this@MainActivity).notify(progressNotification, builder.build())
@@ -163,6 +165,8 @@ class MainActivity : AppCompatActivity() {
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
             .setNotificationInfo("BigPicture", "BigPicture Notification", pendingIntent)
             .setStyle(style)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         NotificationManagerCompat
             .from(this).notify(pictureNotification, builder.build())
@@ -179,6 +183,7 @@ class MainActivity : AppCompatActivity() {
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
             .setNotificationInfo("BigText", "BigText Notification", pendingIntent)
             .setStyle(style)
+            .setAutoCancel(true)
 
         NotificationManagerCompat
             .from(this).notify(textNotification, builder.build())
@@ -187,12 +192,20 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun setInBoxNotification(pendingIntent: PendingIntent){
 
-        val style = NotificationCompat.InboxStyle().addLine("inBox A").addLine("inBox B").addLine("inBox C")
+        //BigTextStyle()과 다르게 짧은 텍스트 여러 줄이 확장된 영역에 표시 (최대 6개)
+        val style = NotificationCompat.InboxStyle()
+            .addLine("inBox A")
+            .addLine("inBox B")
+            .addLine("inBox C")
+            .addLine("inBox D")
+            .addLine("inBox E")
+            .addLine("inBox F")
 
         val builder = NotificationCompat
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
             .setNotificationInfo("InBox", "InBox Notification", pendingIntent)
             .setStyle(style)
+            .setAutoCancel(true)
 
         NotificationManagerCompat
             .from(this).notify(inboxNotification, builder.build())
@@ -214,6 +227,7 @@ class MainActivity : AppCompatActivity() {
 
         val style = NotificationCompat
             .MessagingStyle(person1)
+            .setConversationTitle("Greeting")
             .addMessage(msg1)
             .addMessage(msg2)
 
@@ -221,6 +235,7 @@ class MainActivity : AppCompatActivity() {
             .Builder(this, CHANNEL_ID_SOUND_VIBE)
             .setNotificationInfo("Message", "Message Notification", pendingIntent)
             .setStyle(style)
+            .setAutoCancel(true)
 
         NotificationManagerCompat
             .from(this).notify(messageNotification, builder.build())
