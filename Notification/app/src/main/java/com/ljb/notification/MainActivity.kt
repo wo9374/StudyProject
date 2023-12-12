@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         const val textNotification = 3
         const val inboxNotification = 4
         const val messageNotification = 5
+        const val customNotification = 6
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -66,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             btnBigTxt.setOnClickListener { setOnClick(it) }
             btnInbox.setOnClickListener { setOnClick(it) }
             btnMessage.setOnClickListener { setOnClick(it) }
+            btnCustom.setOnClickListener { setOnClick(it) }
         }
     }
 
@@ -96,6 +99,7 @@ class MainActivity : AppCompatActivity() {
                     btnBigTxt.id -> setBigTextNotification(pendingIntent)
                     btnInbox.id -> setInBoxNotification(pendingIntent)
                     btnMessage.id -> setMessageNotification(pendingIntent)
+                    btnCustom.id -> setCustomViewNotification()
                 }
             }
         }
@@ -239,6 +243,26 @@ class MainActivity : AppCompatActivity() {
 
         NotificationManagerCompat
             .from(this).notify(messageNotification, builder.build())
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun setCustomViewNotification(){
+        val builder = NotificationCompat
+            .Builder(this, CHANNEL_ID_SOUND_VIBE)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setWhen(System.currentTimeMillis())
+            .setContentTitle("Custom")
+            .setContentText("Custom Notification")
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(
+                RemoteViews(packageName, R.layout.custom_notiview).apply {
+                    setTextViewText(R.id.txt_1, "커스텀 뷰")
+                    setTextViewText(R.id.txt_2, "테스트")
+                }
+            )
+
+        NotificationManagerCompat
+            .from(this).notify(customNotification, builder.build())
     }
 
 
