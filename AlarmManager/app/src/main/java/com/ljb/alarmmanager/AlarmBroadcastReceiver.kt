@@ -50,11 +50,11 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                     add(Calendar.SECOND, second)
                 }
 
-                //Intent 그대로 사용
+                //Intent 그대로 사용 (MainActivity 에서 준 PendingIntent 의 requestCode 와 Flag 를 똑같이 맞춰야 cancel 수행됨)
                 val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    PendingIntent.getBroadcast(context, PENDING_REPEAT_CLOCK, intent, PendingIntent.FLAG_IMMUTABLE)
+                    PendingIntent.getBroadcast(context, PENDING_REPEAT_CLOCK, intent, Intent.FILL_IN_DATA or PendingIntent.FLAG_IMMUTABLE)
                 } else {
-                    PendingIntent.getBroadcast(context, PENDING_REPEAT_CLOCK, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    PendingIntent.getBroadcast(context, PENDING_REPEAT_CLOCK, intent, Intent.FILL_IN_DATA or PendingIntent.FLAG_UPDATE_CURRENT)
                 }
 
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
