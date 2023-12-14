@@ -9,12 +9,19 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-import android.view.View
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.ljb.alarmmanager.AlarmConst.INTERVAL_HOUR
+import com.ljb.alarmmanager.AlarmConst.INTERVAL_MINUTE
+import com.ljb.alarmmanager.AlarmConst.INTERVAL_SECOND
+import com.ljb.alarmmanager.AlarmConst.PENDING_REPEAT
+import com.ljb.alarmmanager.AlarmConst.PENDING_REPEAT_CLOCK
+import com.ljb.alarmmanager.AlarmConst.PENDING_SINGLE_DATE
+import com.ljb.alarmmanager.AlarmConst.REQUEST_CODE
+import com.ljb.alarmmanager.AlarmConst.getPendingIntent
+import com.ljb.alarmmanager.AlarmConst.requestAlarmClock
+import com.ljb.alarmmanager.AlarmConst.requestDate
+import com.ljb.alarmmanager.AlarmConst.requestRepeat
 import com.ljb.alarmmanager.databinding.ActivityMainBinding
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -29,13 +36,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val hourArray = Array(25) {i -> i.toString()}       //스피너 0 ~ 24를 위한 25
-        val minuteArray = Array(61) {i -> i.toString()}     //스피너 0 ~ 60을 위한 61
+        val hourArray = Array(25) { i -> i.toString() }       //스피너 0 ~ 24를 위한 25
+        val minuteArray = Array(61) { i -> i.toString() }     //스피너 0 ~ 60을 위한 61
 
         binding.apply {
             spinnerHour.adapter = ArrayAdapter(this@MainActivity, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, hourArray)
             spinnerMinute.adapter = ArrayAdapter(this@MainActivity, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, minuteArray)
             spinnerSecond.adapter = ArrayAdapter(this@MainActivity, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, minuteArray)
+
+            //DatePicker 내일 날짜를 최소 날짜 set
+            datePicker.minDate = LocalDateTime.now().plusDays(1).toDate().time
         }
 
 
@@ -52,41 +62,57 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //Alarm 모두 취소
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            alarmManager.cancelAll()
+        } else {
+            alarmManager.cancel(getPendingIntent(this, PENDING_REPEAT_CLOCK))
+            alarmManager.cancel(getPendingIntent(this, PENDING_SINGLE_DATE))
+            alarmManager.cancel(getPendingIntent(this, PENDING_REPEAT))
+        }
+    }
+
     private fun setOnClick() {
         binding.apply {
-            btnRepeat.setOnClickListener { setRepeatAlarm(60) }
-            btnSingle.setOnClickListener { setSingleDateAlarm() }
-
-            switchAlarmClock.setOnCheckedChangeListener { compoundButton, isChechked ->
-                if (isChechked)
+            switchAlarmClock.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (isChecked)
                     switchAlarmClock.text = "켜짐"
                 else
                     switchAlarmClock.text = "꺼짐"
 
-                switchAlarmClock(isChechked)
+                switchAlarmClock(isChecked)
+            }
+
+            btnDate.setOnClickListener { setDateAlarm() }
+
+            switchRepeat.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (isChecked)
+                    switchRepeat.text = "켜짐"
+                else
+                    switchRepeat.text = "꺼짐"
+
+                setRepeatAlarm(isChecked)
             }
         }
     }
 
-    private fun switchAlarmClock(switchOnOff: Boolean){
+    private fun switchAlarmClock(switchOnOff: Boolean) {
         val hour = binding.spinnerHour.selectedItemPosition
         val minute = binding.spinnerMinute.selectedItemPosition
         val second = binding.spinnerSecond.selectedItemPosition
 
         val receiverIntent = Intent(this@MainActivity, AlarmBroadcastReceiver::class.java).apply {
-            putExtra(REQUEST_CODE, REQUEST_AlARM_CLOCK)
+            putExtra(REQUEST_CODE, requestAlarmClock)
             putExtra(INTERVAL_HOUR, hour)
             putExtra(INTERVAL_MINUTE, minute)
             putExtra(INTERVAL_SECOND, second)
         }
+        val pendingIntent = getPendingIntent(this, PENDING_REPEAT_CLOCK, receiverIntent)
 
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(this@MainActivity, PENDING_REPEAT_CLOCK, receiverIntent, Intent.FILL_IN_DATA or PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getBroadcast(this@MainActivity, PENDING_REPEAT_CLOCK, receiverIntent, Intent.FILL_IN_DATA or PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        if (switchOnOff){
+        if (switchOnOff) {
             val calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
                 add(Calendar.HOUR_OF_DAY, hour)
@@ -100,48 +126,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setRepeatAlarm(second: Int) {
-        if (second < 60)
-            Toast.makeText(this, "setInexactRepeating의\nInterval 최소 주기는 1분으로 실행됩니다.", Toast.LENGTH_SHORT).show()
-
-        val receiverIntent = Intent(this, AlarmBroadcastReceiver::class.java)
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(this, REQUEST_REPEAT, receiverIntent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getBroadcast(this, REQUEST_REPEAT, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun setDateAlarm() {
+        val receiverIntent = Intent(this, AlarmBroadcastReceiver::class.java).apply {
+            putExtra(REQUEST_CODE, requestDate)
         }
-
-
-        //Android 5.1(API 22)부터 배터리 소모량 등을 문제로 알람 반복은 최소 1분의 Interval을 갖도록 되었음
-        //최초 한번 수행 후 1분보다 적은 interval 은 1분 주기로 수행
-        alarmManager.setInexactRepeating(
-            AlarmManager.ELAPSED_REALTIME_WAKEUP,
-            SystemClock.elapsedRealtime(),
-            second * 1000L,
-            pendingIntent
-        )
-    }
-
-
-    private fun setSingleDateAlarm() {
-        val receiverIntent = Intent(this, AlarmBroadcastReceiver::class.java)
-
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(this, REQUEST_SINGLE, receiverIntent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getBroadcast(this, REQUEST_SINGLE, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
+        val pendingIntent = getPendingIntent(this, PENDING_SINGLE_DATE, receiverIntent)
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 8)
-            set(Calendar.MINUTE, 53)
+            set(Calendar.YEAR, binding.datePicker.year)
+            set(Calendar.MONTH, binding.datePicker.month)
+            set(Calendar.DAY_OF_MONTH, binding.datePicker.dayOfMonth)
+
+            //정각
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
 
-            // 지나간 시간의 경우 다음날 알람으로 울리도록
+            /*// 지나간 시간의 경우 다음날 알람으로 울리도록
             if (before(Calendar.getInstance())) {
                 add(Calendar.DATE, 1) // 하루 더하기
-            }
+            }*/
         }
 
         alarmManager.setExactAndAllowWhileIdle(
@@ -149,12 +154,9 @@ class MainActivity : AppCompatActivity() {
             calendar.timeInMillis,
             pendingIntent
         )
-
-        //하루 간격 반복
-        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
     }
 
-    private fun setSingleDateStringAlarm(pendingIntent: PendingIntent) {
+    private fun setDateStringAlarm(pendingIntent: PendingIntent) {
         val hour = "5"
         val minute = "53"
         val second = "30"
@@ -170,6 +172,58 @@ class MainActivity : AppCompatActivity() {
             calendar.timeInMillis,
             pendingIntent
         )
+    }
+
+    //Android 5.1(API 22)부터 배터리 소모량 등을 문제로 알람 반복은 최소 1분의 Interval을 갖도록 되었음
+    //최초 한번 수행 후 1분보다 적은 interval 은 1분 주기로 수행
+    private fun setRepeatAlarm(switchOnOff: Boolean) {
+        val receiverIntent = Intent(this, AlarmBroadcastReceiver::class.java).apply {
+            putExtra(REQUEST_CODE, requestRepeat)
+        }
+        val pendingIntent = getPendingIntent(this, PENDING_REPEAT, receiverIntent)
+
+        /**
+         * AlarmManager.INTERVAL_DAY, INTERVAL_HALF_DAY, INTERVAL_HOUR, INTERVAL_HALF_HOUR, INTERVAL_FIFTEEN_MINUTES
+         * */
+
+        if (switchOnOff) {
+            alarmManager.setInexactRepeating(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                60 * 1000L,
+                pendingIntent
+            )
+        } else {
+            alarmManager.cancel(pendingIntent)
+        }
+    }
+
+    private fun setAlarmApplyByVersion() {
+        val receiverIntent = Intent(this, AlarmBroadcastReceiver::class.java)
+        val pendingIntent = getPendingIntent(this, PENDING_REPEAT, receiverIntent)
+
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ->
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                    pendingIntent
+                )
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ->
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.INTERVAL_HOUR,
+                    pendingIntent
+                )
+
+            else ->
+                alarmManager.set(
+                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent
+                )
+        }
     }
 }
 
