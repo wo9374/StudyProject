@@ -6,6 +6,7 @@ import Versions.ktor
 import Versions.okHttp
 import Versions.orBit
 import Versions.retrofit
+import Versions.protoBuf
 
 object Versions {
     const val hilt ="2.49"
