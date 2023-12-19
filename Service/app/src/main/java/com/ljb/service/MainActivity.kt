@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.ljb.service.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -60,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         binding.apply {
             switchForeground.setOnCheckedChangeListener { compoundButton, isChecked ->
 
@@ -85,9 +83,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            btnBackground.setOnClickListener {
+            switchBackground.setOnCheckedChangeListener { compoundButton, isChecked ->
                 val backgroundService = Intent(this@MainActivity, MyBackgroundService::class.java)
-                startService(backgroundService)
+                if (isChecked){
+                    startService(backgroundService)
+                } else {
+                    stopService(backgroundService)
+                }
             }
         }
     }

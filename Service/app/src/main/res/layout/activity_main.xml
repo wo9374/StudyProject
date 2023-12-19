@@ -6,28 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btn_background"
+    <TextView
+        android:id="@+id/txt_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Background"
+        android:layout_marginEnd="10dp"
+        android:text="BackgroundService"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/switch_background"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="꺼짐"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/txt_background"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txt_foreground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:text="ForegroundService"
         app:layout_constraintBottom_toBottomOf="@id/switch_foreground"
         app:layout_constraintEnd_toStartOf="@id/switch_foreground"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/switch_foreground"
-        android:layout_marginEnd="10dp"/>
+        app:layout_constraintTop_toTopOf="@id/switch_foreground" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_foreground"
@@ -37,5 +51,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@id/txt_foreground"
-        app:layout_constraintTop_toBottomOf="@id/btn_background" />
+        app:layout_constraintTop_toBottomOf="@id/switch_background" />
 </androidx.constraintlayout.widget.ConstraintLayout>
