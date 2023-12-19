@@ -2,12 +2,16 @@ package com.ljb.service
 
 import android.Manifest
 import android.app.ActivityManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -28,11 +32,31 @@ fun <T> Context.isServiceRunning(service: Class<T>): Boolean {
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private lateinit var prefsManager : PrefsManager
 
     companion object {
         const val DENIED = "denied"
         const val EXPLAINED = "explained"
+    }
+
+    private lateinit var prefsManager : PrefsManager    //ForegroundService 실행 유무 Preference
+
+    private lateinit var mBoundService : MyBoundService
+    var isService = false
+
+    // bindService() 메서드를 통해 시스템에 전달하면 서비스와 연결할 수 있음
+    private val connection = object : ServiceConnection {
+        // 서비스가 연결되면 호출
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MyBoundService.MyBinder
+            mBoundService = binder.getService()
+            isService = true    // onServiceDisconnected 구조에 때문에 서비스 연결 상태를 확인하는 로직이 필요
+            Log.e("BoundService Test", "Connected")
+        }
+
+        // 정상적으로 연결 해제되었을 때는 호출되지 않고, 비정상적으로 서비스가 종료되었을 때만 호출
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isService = false
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +68,11 @@ class MainActivity : AppCompatActivity() {
             registerForActivityResult.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
         }
 
+        observePrefs()
+        initialLayout()
+    }
+
+    private fun observePrefs(){
         prefsManager = PrefsManager(this.dataStore)
         lifecycleScope.launch {
             prefsManager.foregroundRunningFlow.collectLatest {
@@ -58,7 +87,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    private fun initialLayout(){
         binding.apply {
             switchForeground.setOnCheckedChangeListener { compoundButton, isChecked ->
 
@@ -67,7 +98,8 @@ class MainActivity : AppCompatActivity() {
                     val foregroundService = Intent(this@MainActivity, MyForegroundService::class.java)
 
                     if (isChecked){
-                        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED){
+                        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                            || Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU){
                             startService(foregroundService)
 
                             withContext(Dispatchers.Default){
@@ -87,8 +119,35 @@ class MainActivity : AppCompatActivity() {
                 val backgroundService = Intent(this@MainActivity, MyBackgroundService::class.java)
                 if (isChecked){
                     startService(backgroundService)
+                    binding.switchBackground.text = "켜짐"
                 } else {
                     stopService(backgroundService)
+                    binding.switchBackground.text = "꺼짐"
+                }
+            }
+
+            switchBound.setOnCheckedChangeListener { compoundButton, isChecked ->
+                val intent = Intent(this@MainActivity, MyBoundService::class.java)
+
+                if (isChecked){
+                    //서비스를 호출하면서 커넥션을 같이 넘겨준다.
+                    //BIND_AUTO_CREATE : 서비스가 생성되어 있지 않으면 생성 후 바인딩을 하고 생성되어 있으면 바로 바인딩
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                    binding.switchBound.text = "켜짐"
+                } else {
+                    if (isService){
+                        unbindService(connection)
+                        isService = false
+                    }
+                    binding.switchBound.text = "꺼짐"
+                }
+            }
+
+            btnCount.setOnClickListener {
+                if (isService){
+                    Toast.makeText(this@MainActivity, "BoundService Count: ${mBoundService.getCount()}", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@MainActivity, "BoundService가 연결되지 않았습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

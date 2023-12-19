@@ -27,6 +27,7 @@
 
         <service android:name=".MyBackgroundService"/>
         <service android:name=".MyForegroundService"/>
+        <service android:name=".MyBoundService"/>
     </application>
 
 </manifest>

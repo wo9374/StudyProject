@@ -13,7 +13,7 @@
         android:layout_marginEnd="10dp"
         android:text="BackgroundService"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/switch_background"
+        app:layout_constraintEnd_toStartOf="@id/switch_background"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/txt_background"
+        app:layout_constraintStart_toEndOf="@id/txt_background"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -52,4 +52,34 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@id/txt_foreground"
         app:layout_constraintTop_toBottomOf="@id/switch_background" />
+
+    <TextView
+        android:id="@+id/txt_bound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BoundService"
+        app:layout_constraintBottom_toBottomOf="@id/switch_bound"
+        app:layout_constraintEnd_toEndOf="@id/txt_foreground"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="@id/switch_bound" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_bound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="꺼짐"
+        app:layout_constraintEnd_toEndOf="@id/switch_foreground"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/switch_foreground"
+        app:layout_constraintTop_toBottomOf="@id/switch_foreground" />
+
+    <Button
+        android:id="@+id/btn_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Count"
+        app:layout_constraintBottom_toBottomOf="@id/switch_bound"
+        app:layout_constraintStart_toEndOf="@id/switch_bound"
+        app:layout_constraintTop_toBottomOf="@id/switch_foreground" />
 </androidx.constraintlayout.widget.ConstraintLayout>
