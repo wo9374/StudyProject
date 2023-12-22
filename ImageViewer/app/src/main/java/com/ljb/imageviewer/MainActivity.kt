@@ -1,12 +1,16 @@
 package com.ljb.imageviewer
 
+import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
+import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Placeholder
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -32,7 +36,38 @@ class MainActivity : AppCompatActivity() {
             start()
         }
 
-        val listener = object : RequestListener<Drawable>{
+        binding.transformLayout.apply {
+            //default true
+            isRotateEnabled = false
+            isFlingEnabled = false
+
+            setUrlImgView(this@MainActivity, "https://picsum.photos/id/20/300/200", binding.innerImgView)
+        }
+
+        binding.transformImgView.apply {
+            isRotateEnabled = false
+            isFlingEnabled = false
+
+            setUrlImgView(this@MainActivity, "https://picsum.photos/id/80/300/200", this)
+        }
+
+        setUrlImgView(this, "https://picsum.photos/id/140/300/200", binding.pinchDtapImgView)
+    }
+
+    fun setUrlImgView(
+        context: Context, url: String, imgView: ImageView, placeholder: Placeholder? = null
+    ){
+        Glide
+            .with(context)
+            .load(url)
+            .listener(getRequestGlideListener(imgView))
+            .centerCrop()
+            //.placeholder(placeholder)
+            .into(imgView)
+    }
+
+    fun getRequestGlideListener(view: ImageView) : RequestListener<Drawable> {
+        return object : RequestListener<Drawable>{
             //실패시 노트북 사진 출력
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
 
@@ -42,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                         .with(this@MainActivity)
                         .load("https://picsum.photos/id/0/200/300")
                         .centerCrop()
-                        .into(binding.imageView)
+                        .into(view)
                 }
                 return false
             }
@@ -52,8 +87,7 @@ class MainActivity : AppCompatActivity() {
                 if (resource is BitmapDrawable){
                     resource.bitmap.run {
                         Log.e(
-                            "Image Test", String.format(
-                                "bitmap %,d btyes, size: %d x %d",
+                            "Image Test", String.format("${view.id} bitmap %,d btyes, size: %d x %d",
                                 byteCount,		// Resizing 된 img byte
                                 width,			// 이미지 넓이
                                 height			// 이미지 높이
@@ -64,24 +98,5 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         }
-
-        Glide
-            .with(this)
-            .load("https://picsum.photos/400/900")
-            .listener(listener)
-            //.error(R.drawable.ic_error_image)
-            .centerCrop()
-            .placeholder(circularProgressDrawable)
-            .into(binding.imageView)
-
-
-        Glide
-            .with(this)
-            .load("https://picsum.photos/800/900")
-            .listener(listener)
-            //.error(R.drawable.ic_error_image)
-            .centerCrop()
-            .placeholder(circularProgressDrawable)
-            .into(binding.testImg)
     }
 }

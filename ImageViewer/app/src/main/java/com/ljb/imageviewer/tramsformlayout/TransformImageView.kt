@@ -1,4 +1,4 @@
-package com.ljb.imageviewer.tramsform
+package com.ljb.imageviewer.tramsformlayout
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.graphics.withMatrix
 import com.ljb.imageviewer.R
