@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
             btnTransLayout.setOnClickListener(onClick)
             btnTransImg.setOnClickListener(onClick)
             btnDoubletapPinch.setOnClickListener(onClick)
+            btnZoomableImg.setOnClickListener(onClick)
         }
     }
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
                     btnTransLayout.id -> TransformLayoutActivity::class.java
                     btnTransImg.id -> TransformImageActivity::class.java
                     btnDoubletapPinch.id -> PinchDoubleTapActivity::class.java
+                    btnZoomableImg.id -> ZoomableImageViewActivity::class.java
                     else -> MainActivity::class.java
                 }
             )
