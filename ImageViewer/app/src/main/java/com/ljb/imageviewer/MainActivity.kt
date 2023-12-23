@@ -5,12 +5,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.Placeholder
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -30,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val circularProgressDrawable = CircularProgressDrawable(this).apply {
+        val circularProgress = CircularProgressDrawable(this).apply {
             strokeWidth = 5f        //선 두께
             centerRadius = 30f      //반지름
             start()
@@ -38,35 +34,50 @@ class MainActivity : AppCompatActivity() {
 
         binding.transformLayout.apply {
             //default true
-            isRotateEnabled = false
-            isFlingEnabled = false
+            //isRotateEnabled = false
+            //isFlingEnabled = false
 
-            setUrlImgView(this@MainActivity, "https://picsum.photos/id/20/300/200", binding.innerImgView)
+            setUrlImgView(
+                this@MainActivity,
+                "https://picsum.photos/id/20/900/700",
+                binding.innerImgView,
+                circularProgress
+            )
         }
 
         binding.transformImgView.apply {
-            isRotateEnabled = false
-            isFlingEnabled = false
+            //isRotateEnabled = false
+            //isFlingEnabled = false
 
-            setUrlImgView(this@MainActivity, "https://picsum.photos/id/80/300/200", this)
+            setUrlImgView(
+                this@MainActivity,
+                "https://picsum.photos/id/80/900/700",
+                this,
+                circularProgress
+            )
         }
 
-        setUrlImgView(this, "https://picsum.photos/id/140/300/200", binding.pinchDtapImgView)
+        setUrlImgView(
+            this,
+            "https://picsum.photos/id/140/900/700",
+            binding.pinchDtapImgView,
+            circularProgress
+        )
     }
 
-    fun setUrlImgView(
-        context: Context, url: String, imgView: ImageView, placeholder: Placeholder? = null
+    private fun setUrlImgView(
+        context: Context, url: String, imgView: ImageView, placeholder: CircularProgressDrawable? = null
     ){
         Glide
             .with(context)
             .load(url)
             .listener(getRequestGlideListener(imgView))
             .centerCrop()
-            //.placeholder(placeholder)
+            .placeholder(placeholder)
             .into(imgView)
     }
 
-    fun getRequestGlideListener(view: ImageView) : RequestListener<Drawable> {
+    private fun getRequestGlideListener(view: ImageView) : RequestListener<Drawable> {
         return object : RequestListener<Drawable>{
             //실패시 노트북 사진 출력
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
