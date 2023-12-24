@@ -1,4 +1,4 @@
-package com.ljb.imageviewer.pinchzoom
+package com.ljb.imageviewer.highjune
 
 import android.annotation.TargetApi
 import android.content.Context

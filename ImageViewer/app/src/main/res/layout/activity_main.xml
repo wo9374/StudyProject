@@ -8,38 +8,29 @@
 
 
     <Button
-        android:id="@+id/btn_trans_layout"
+        android:id="@+id/btn_udarawanasinghe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transform\nLayout"
+        android:text="UdaraWanasinghe"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn_trans_img"
+        android:id="@+id/btn_highjune"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transform\nImageView"
-        app:layout_constraintBottom_toTopOf="@+id/btn_trans_layout"
+        android:text="HighJune"
+        app:layout_constraintBottom_toTopOf="@id/btn_udarawanasinghe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn_doubletap_pinch"
+        android:id="@+id/btn_my_custom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DoubleTap\nPinchImage"
-        app:layout_constraintBottom_toTopOf="@+id/btn_trans_img"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_zoomable_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Zoomable\nImage"
-        app:layout_constraintBottom_toTopOf="@+id/btn_doubletap_pinch"
+        android:text="MyCustom"
+        app:layout_constraintBottom_toTopOf="@id/btn_highjune"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

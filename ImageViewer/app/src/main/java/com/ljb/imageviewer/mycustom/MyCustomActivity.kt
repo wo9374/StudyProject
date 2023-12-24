@@ -1,4 +1,4 @@
-package com.ljb.imageviewer
+package com.ljb.imageviewer.mycustom
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix
@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -18,15 +17,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.ljb.imageviewer.circularProgress
 import com.ljb.imageviewer.databinding.ActivityZoomableImageViewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Float.max
-import java.lang.Float.min
-import kotlin.math.sqrt
 
-class ZoomableImageViewActivity : AppCompatActivity() {
+class MyCustomActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityZoomableImageViewBinding.inflate(layoutInflater) }
     private val imageView get() = binding.imgView
@@ -50,7 +47,7 @@ class ZoomableImageViewActivity : AppCompatActivity() {
                 //RequestListener 는 내부적으로 Worker Thread 처리가 되기 때문에 UI 작업시 Main Thread 필요
                 CoroutineScope(Dispatchers.Main).launch {
                     Glide
-                        .with(this@ZoomableImageViewActivity)
+                        .with(this@MyCustomActivity)
                         .load("https://picsum.photos/id/0/900/1000")    //실패시 노트북 사진 출력
                         .centerCrop()
                         .into(imageView)

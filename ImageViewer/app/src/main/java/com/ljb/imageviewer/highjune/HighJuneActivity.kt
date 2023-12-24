@@ -1,10 +1,11 @@
-package com.ljb.imageviewer
+package com.ljb.imageviewer.highjune
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ljb.imageviewer.pinchzoom.TouchImageView
+import com.ljb.imageviewer.circularProgress
+import com.ljb.imageviewer.setUrlImgView
 
-class PinchDoubleTapActivity : AppCompatActivity() {
+class HighJuneActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

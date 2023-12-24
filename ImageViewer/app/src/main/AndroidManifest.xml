@@ -26,8 +26,8 @@
         </activity>
         <activity android:name=".udarawanasinghe.UdaraWanasingheActivity" />
         <activity android:name=".TransformImageActivity" />
-        <activity android:name=".PinchDoubleTapActivity" />
-        <activity android:name=".ZoomableImageViewActivity" />
+        <activity android:name=".highjune.HighJuneActivity" />
+        <activity android:name=".mycustom.MyCustomActivity" />
     </application>
 
 </manifest>

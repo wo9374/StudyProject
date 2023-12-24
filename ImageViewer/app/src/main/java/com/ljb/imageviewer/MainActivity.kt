@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View.OnClickListener
 import androidx.appcompat.app.AppCompatActivity
 import com.ljb.imageviewer.databinding.ActivityMainBinding
+import com.ljb.imageviewer.highjune.HighJuneActivity
+import com.ljb.imageviewer.mycustom.MyCustomActivity
 import com.ljb.imageviewer.udarawanasinghe.UdaraWanasingheActivity
 
 class MainActivity : AppCompatActivity() {
@@ -16,10 +18,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.apply {
-            btnTransLayout.setOnClickListener(onClick)
-            btnTransImg.setOnClickListener(onClick)
-            btnDoubletapPinch.setOnClickListener(onClick)
-            btnZoomableImg.setOnClickListener(onClick)
+            btnUdarawanasinghe.setOnClickListener(onClick)
+            btnHighjune.setOnClickListener(onClick)
+            btnMyCustom.setOnClickListener(onClick)
         }
     }
 
@@ -27,10 +28,9 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             val intent = Intent(
                 applicationContext, when (it.id) {
-                    btnTransLayout.id -> UdaraWanasingheActivity::class.java
-                    btnTransImg.id -> TransformImageActivity::class.java
-                    btnDoubletapPinch.id -> PinchDoubleTapActivity::class.java
-                    btnZoomableImg.id -> ZoomableImageViewActivity::class.java
+                    btnUdarawanasinghe.id -> UdaraWanasingheActivity::class.java
+                    btnHighjune.id -> HighJuneActivity::class.java
+                    btnMyCustom.id -> MyCustomActivity::class.java
                     else -> MainActivity::class.java
                 }
             )
