@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.ImageView
@@ -31,6 +32,7 @@ class ZoomableImageViewActivity : AppCompatActivity() {
     private val imageView get() = binding.imgView
 
     private lateinit var scaleGestureDetector: ScaleGestureDetector // 핀치 줌 제스처 감지를 위한 객체
+    private lateinit var gestureDetector: GestureDetector           // 탭 제스처 감지를 위한 객체
 
     // ImageView 에 적용할 변환 Matrix 및 제스처 처리에 사용할 변수
     private val matrix = Matrix()
@@ -87,6 +89,9 @@ class ZoomableImageViewActivity : AppCompatActivity() {
 
         // 핀치 줌 제스처를 감지하는 객체 초기화
         scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
+
+        // 더블 탭 제스처를 감지하는 객체 초기화
+        gestureDetector = GestureDetector(this, GestureListener())
     }
 
     // 이미지뷰에 확대/축소 기능을 활성화하는 함수
@@ -94,6 +99,7 @@ class ZoomableImageViewActivity : AppCompatActivity() {
     private fun enableZoom() {
         imageView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
 
             when (event.action) {
 
@@ -131,6 +137,38 @@ class ZoomableImageViewActivity : AppCompatActivity() {
             imageView.imageMatrix = matrix
             return true
         }
+    }
+
+    //제스처 감지 리스너
+    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        // 더블 탭 체스처 감지
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            //줌이 안되어 있을시에만 더블 탭으로 확대
+            if (!isZoomedIn()) {
+                matrix.postScale(3f, 3f, e.x, e.y) //더블 탭할 때 3배로 확대
+            } else {
+                // 다시 더블 탭할 때 원본 크기로 복귀
+                matrix.reset()
+                matrix.setScale(originalScaleX, originalScaleY)
+            }
+
+            adjustMatrix()
+
+            imageView.imageMatrix = matrix
+            return true
+        }
+    }
+
+    // 현재 스케일을 가져와 이미지 원본 스케일과 비교해 줌이 되어있는지 판단해 return 하는 함수
+    private fun isZoomedIn(): Boolean {
+        //현재 스케일 get
+        val values = FloatArray(9)
+        matrix.getValues(values)
+        val currentScale = values[Matrix.MSCALE_X]
+
+        //현재 스케일 이용하여 이미지 원본 스케일 보다 클때 true
+        return currentScale > originalScaleX && currentScale > originalScaleY
     }
 
     // ImageView 의 Matrix 를 조정하여 Zoom 영역이 이미지 영역을 벗어나지 않도록 하는 함수
