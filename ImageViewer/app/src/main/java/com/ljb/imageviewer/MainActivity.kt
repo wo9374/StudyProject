@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View.OnClickListener
 import androidx.appcompat.app.AppCompatActivity
 import com.ljb.imageviewer.databinding.ActivityMainBinding
+import com.ljb.imageviewer.udarawanasinghe.UdaraWanasingheActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             val intent = Intent(
                 applicationContext, when (it.id) {
-                    btnTransLayout.id -> TransformLayoutActivity::class.java
+                    btnTransLayout.id -> UdaraWanasingheActivity::class.java
                     btnTransImg.id -> TransformImageActivity::class.java
                     btnDoubletapPinch.id -> PinchDoubleTapActivity::class.java
                     btnZoomableImg.id -> ZoomableImageViewActivity::class.java

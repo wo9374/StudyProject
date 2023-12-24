@@ -1,4 +1,4 @@
-package com.ljb.imageviewer.tramsformlayout
+package com.ljb.imageviewer.udarawanasinghe
 
 import android.content.Context
 import android.graphics.Matrix
@@ -9,8 +9,8 @@ import android.view.ViewConfiguration
 import androidx.core.graphics.values
 import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.dynamicanimation.animation.FloatValueHolder
-import com.ljb.imageviewer.tramsformlayout.extensions.ViewConfigurationCompatExtended
-import com.ljb.imageviewer.tramsformlayout.extensions.focusPoint
+import com.ljb.imageviewer.udarawanasinghe.extensions.ViewConfigurationCompatExtended
+import com.ljb.imageviewer.udarawanasinghe.extensions.focusPoint
 import kotlin.math.abs
 import kotlin.math.atan2
 

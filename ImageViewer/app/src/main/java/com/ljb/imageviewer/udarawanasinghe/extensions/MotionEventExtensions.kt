@@ -1,4 +1,4 @@
-package com.ljb.imageviewer.tramsformlayout.extensions
+package com.ljb.imageviewer.udarawanasinghe.extensions
 
 import android.view.MotionEvent
 import android.view.ViewConfiguration

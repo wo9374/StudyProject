@@ -1,12 +1,14 @@
-package com.ljb.imageviewer
+package com.ljb.imageviewer.udarawanasinghe
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ljb.imageviewer.databinding.ActivityTransformLayoutBinding
+import com.ljb.imageviewer.circularProgress
+import com.ljb.imageviewer.databinding.ActivityUdarawanasingheBinding
+import com.ljb.imageviewer.setUrlImgView
 
-class TransformLayoutActivity : AppCompatActivity() {
+class UdaraWanasingheActivity : AppCompatActivity() {
 
-    private val binding by lazy { ActivityTransformLayoutBinding.inflate(layoutInflater) }
+    private val binding by lazy { ActivityUdarawanasingheBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

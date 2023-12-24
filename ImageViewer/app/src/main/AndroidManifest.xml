@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TransformLayoutActivity" />
+        <activity android:name=".udarawanasinghe.UdaraWanasingheActivity" />
         <activity android:name=".TransformImageActivity" />
         <activity android:name=".PinchDoubleTapActivity" />
         <activity android:name=".ZoomableImageViewActivity" />
