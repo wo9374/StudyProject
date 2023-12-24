@@ -2,15 +2,14 @@ package com.ljb.imageviewer
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix
+import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.ImageView
-import android.widget.Scroller
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -22,47 +21,52 @@ import com.ljb.imageviewer.databinding.ActivityZoomableImageViewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Float.max
+import java.lang.Float.min
+import kotlin.math.sqrt
 
 class ZoomableImageViewActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityZoomableImageViewBinding.inflate(layoutInflater) }
+    private val imageView get() = binding.imgView
 
-    // 매트릭스 및 제스처 디텍터 변수
+    private lateinit var scaleGestureDetector: ScaleGestureDetector // 핀치 줌 제스처 감지를 위한 객체
+
+    // ImageView 에 적용할 변환 Matrix 및 제스처 처리에 사용할 변수
     private val matrix = Matrix()
-    private lateinit var gestureDetector: GestureDetector
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
+    private val startPoint = PointF()
+    private var originalScaleX = 0f
+    private var originalScaleY = 0f
 
-    private lateinit var scroller: Scroller
-
-    private var intrinsicWidth = 0f
-    private var intrinsicHeight = 0f
-    private val matrixValues = FloatArray(9)
-
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // Glide 이미지 로딩 시 이벤트 처리를 위한 리스너
         val listener = object : RequestListener<Drawable> {
-            //실패시 노트북 사진 출력
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-
                 //RequestListener 는 내부적으로 Worker Thread 처리가 되기 때문에 UI 작업시 Main Thread 필요
                 CoroutineScope(Dispatchers.Main).launch {
                     Glide
                         .with(this@ZoomableImageViewActivity)
-                        .load("https://picsum.photos/id/0/900/1000")
+                        .load("https://picsum.photos/id/0/900/1000")    //실패시 노트북 사진 출력
                         .centerCrop()
-                        .into(binding.imgView)
+                        .into(imageView)
                 }
                 return false
             }
 
             //이미지 바이트, 크기 확인
+            @SuppressLint("ClickableViewAccessibility")
             override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                 if (resource is BitmapDrawable){
                     resource.bitmap.run {
                         Log.e("ZoomTest", String.format("bitmap %,d btyes, size: %d x %d", byteCount, width, height))
+
+                        //줌 가능 상태 활성화
+                        enableZoom()
+                        originalScaleX = imageView.width.toFloat() / width
+                        originalScaleY = imageView.height.toFloat() / height
                     }
                 }
                 return false
@@ -77,113 +81,84 @@ class ZoomableImageViewActivity : AppCompatActivity() {
             .placeholder(circularProgress(this))
             .timeout(7000)
             .listener(listener)
-            .skipMemoryCache(true)                  //메모리캐시 건너띄기
-            .diskCacheStrategy(DiskCacheStrategy.NONE)    //디스크캐시 건너띄기
-            .into(binding.imgView)
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(imageView)
 
+        // 핀치 줌 제스처를 감지하는 객체 초기화
+        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
+    }
 
-
-        // Gesture Detector 및 Scale Gesture Detector 초기화
-        gestureDetector = GestureDetector(this@ZoomableImageViewActivity, GestureListener())
-        scaleGestureDetector = ScaleGestureDetector(this@ZoomableImageViewActivity, ScaleListener())
-
-        scroller = Scroller(this)
-
-
-
-        // 이미지 뷰에 터치 리스너 설정
-        binding.imgView.setOnTouchListener { _, event ->
+    // 이미지뷰에 확대/축소 기능을 활성화하는 함수
+    @SuppressLint("ClickableViewAccessibility")
+    private fun enableZoom() {
+        imageView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
-            gestureDetector.onTouchEvent(event)
-            return@setOnTouchListener true
-        }
 
+            when (event.action) {
 
-        // 이미지 뷰의 ScaleType을 Matrix로 설정
-        binding.imgView.scaleType = ImageView.ScaleType.MATRIX
+                // 사용자가 터치를 시작할 때의 처리
+                MotionEvent.ACTION_DOWN -> {
+                    startPoint.set(event.x, event.y)
+                }
 
+                // 사용자가 터치한 상태에서 이동할 때의 처리
+                MotionEvent.ACTION_MOVE -> {
 
-        // 이미지 뷰에 초기 매트릭스 설정
-        matrix.set(binding.imgView.imageMatrix)
-        binding.imgView.imageMatrix = matrix
-    }
+                    // 이미지 이동 처리
+                    val offsetX = event.x - startPoint.x
+                    val offsetY = event.y - startPoint.y
+                    matrix.postTranslate(offsetX, offsetY)
+                    startPoint.set(event.x, event.y)
 
-    // Gesture Detector 리스너 구현
-    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            // Double Tap 시에 이미지를 2배로 확대
-            val scale = if (matrix.isIdentity) 2.0f else 1.0f
-            matrix.setScale(scale, scale, e.x, e.y)
-            binding.imgView.imageMatrix = matrix
-            Log.e("ZoomTest", "GestureListener - onDoubleTap()")
-            return true
-        }
+                    adjustMatrix()
+                }
+            }
 
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-            // Fling 동작 처리 (Scroller 사용)
-            scroller.fling(
-                matrixValues[Matrix.MTRANS_X].toInt(),
-                matrixValues[Matrix.MTRANS_Y].toInt(),
-                velocityX.toInt(),
-                velocityY.toInt(),
-                0,
-                (binding.imgView.width - intrinsicWidth).toInt(),
-                0,
-                (binding.imgView.height - intrinsicHeight).toInt()
-            )
-            return true
+            imageView.imageMatrix = matrix
+            true
         }
     }
 
-    // Scale Gesture Detector 리스너 구현
+    // 확대/축소 제스처를 감지하는 리스너
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            // Pinch Zoom 동작 처리
             val scaleFactor = detector.scaleFactor
             matrix.postScale(scaleFactor, scaleFactor, detector.focusX, detector.focusY)
-            limitScale()
-            binding.imgView.imageMatrix = matrix
 
-            Log.e("ZoomTest", "ScaleListener - onScale()")
+            adjustMatrix()
+
+            imageView.imageMatrix = matrix
             return true
         }
     }
 
-    // 이미지의 확대/축소를 제한하는 함수
-    private fun limitScale() {
-        matrix.getValues(matrixValues)
-        val currentScale = matrixValues[Matrix.MSCALE_X]
+    // ImageView 의 Matrix 를 조정하여 Zoom 영역이 이미지 영역을 벗어나지 않도록 하는 함수
+    private fun adjustMatrix() {
+        val values = FloatArray(9)
+        matrix.getValues(values)
 
-        // 최소/최대 스케일을 정의
-        val minScale = 1.0f
-        val maxScale = 5.0f
+        val scaleX = values[Matrix.MSCALE_X]
+        val scaleY = values[Matrix.MSCALE_Y]
 
-        // 스케일 범위를 벗어나지 않도록 조정
-        if (currentScale < minScale) {
-            matrix.postScale(minScale / currentScale, minScale / currentScale, binding.imgView.width / 2f, binding.imgView.height / 2f)
-        } else if (currentScale > maxScale) {
-            matrix.postScale(maxScale / currentScale, maxScale / currentScale, binding.imgView.width / 2f, binding.imgView.height / 2f)
+        // 현재 스케일이 원본 스케일보다 작아지지 않도록 처리
+        values[Matrix.MSCALE_X] = scaleX.coerceAtLeast(originalScaleX)
+        values[Matrix.MSCALE_Y] = scaleY.coerceAtLeast(originalScaleY)
+
+        val drawable = imageView.drawable
+        if (drawable is BitmapDrawable) {
+            val bitmap = drawable.bitmap
+            val displayWidth = imageView.width
+            val displayHeight = imageView.height
+
+            // 이미지가 화면보다 크게 줌인된 경우 Zoom 영역을 이미지 영역 내로 조정
+            val maxTransX = (bitmap.width * values[Matrix.MSCALE_X] - displayWidth).coerceAtLeast(0f)
+            val maxTransY = (bitmap.height * values[Matrix.MSCALE_Y] - displayHeight).coerceAtLeast(0f)
+
+            values[Matrix.MTRANS_X] = values[Matrix.MTRANS_X].coerceIn(-maxTransX, 0f)
+            values[Matrix.MTRANS_Y] = values[Matrix.MTRANS_Y].coerceIn(-maxTransY, 0f)
+
+            matrix.setValues(values)
         }
-    }
-
-    // 이미지의 이동을 제한하는 함수
-    private fun limitTranslation() {
-        matrix.getValues(matrixValues)
-        val transX = matrixValues[Matrix.MTRANS_X]
-        val transY = matrixValues[Matrix.MTRANS_Y]
-
-        // 이미지의 이동 범위를 정의
-        val minX = binding.imgView.width - intrinsicWidth
-        val minY = binding.imgView.height - intrinsicHeight
-        val maxX = 0f
-        val maxY = 0f
-
-        // 이동 범위를 벗어나지 않도록 조정
-        val adjustedTransX = transX.coerceIn(minX, maxX)
-        val adjustedTransY = transY.coerceIn(minY, maxY)
-
-        // 직접 값을 설정하여 현재 행렬에 적용
-        matrix.setTranslate(adjustedTransX, adjustedTransY)
-        binding.imgView.imageMatrix = matrix
     }
 }
