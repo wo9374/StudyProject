@@ -6,6 +6,10 @@ import com.ljb.imageviewer.circularProgress
 import com.ljb.imageviewer.databinding.ActivityUdarawanasingheBinding
 import com.ljb.imageviewer.setUrlImgView
 
+/**
+ * https://github.com/UdaraWanasinghe/android-transform-layout
+ * */
+
 class UdaraWanasingheActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityUdarawanasingheBinding.inflate(layoutInflater) }

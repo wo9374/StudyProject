@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ljb.imageviewer.circularProgress
 import com.ljb.imageviewer.setUrlImgView
 
+/**
+ * https://it-highjune.tistory.com/69
+ * */
+
 class HighJuneActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
