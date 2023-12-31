@@ -19,7 +19,7 @@ class MvvmViewModel : ViewModel() {
     val newsList: StateFlow<UiState<List<NewsData>>> get() = _newsList
 
     fun getNews(query:String){
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch{
             newsRepository.getSearchNews(query).collectLatest { networkState->
                 when(networkState){
                     is NetworkState.Success ->

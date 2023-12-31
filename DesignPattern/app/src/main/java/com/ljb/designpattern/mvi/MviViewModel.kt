@@ -24,7 +24,7 @@ class MviViewModel : ContainerHost<NewsState, NewsSideEffect>, ViewModel() {
     fun getSearchNews(query: String) = intent {
         reduce { state.copy(loading = true) }
 
-        newsRepository.getSearchNews(query).flowOn(Dispatchers.IO).collectLatest { networkState ->
+        newsRepository.getSearchNews(query).collectLatest { networkState ->
             when (networkState) {
                 is NetworkState.Success -> {
                     reduce { state.copy(loading = false) }
