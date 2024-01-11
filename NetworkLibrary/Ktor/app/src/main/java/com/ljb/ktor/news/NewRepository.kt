@@ -1,4 +1,4 @@
-package com.ljb.ktor
+package com.ljb.ktor.news
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

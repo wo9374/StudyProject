@@ -1,10 +1,11 @@
-package com.ljb.ktor
+package com.ljb.ktor.news
 
 import android.util.Log
-import com.ljb.ktor.ApiInfo.HEADER_ID
-import com.ljb.ktor.ApiInfo.HEADER_SECRET
-import com.ljb.ktor.ApiInfo.HOST
-import com.ljb.ktor.ApiInfo.PATH
+import com.ljb.ktor.BuildConfig
+import com.ljb.ktor.news.ApiInfo.HEADER_ID
+import com.ljb.ktor.news.ApiInfo.HEADER_SECRET
+import com.ljb.ktor.news.ApiInfo.HOST
+import com.ljb.ktor.news.ApiInfo.PATH
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -19,7 +20,6 @@ import io.ktor.http.headers
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 
 object ApiInfo {
     //const val BASE_URL = "https://openapi.naver.com/v1/search/news.json"

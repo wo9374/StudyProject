@@ -1,4 +1,4 @@
-package com.ljb.ktor
+package com.ljb.ktor.news
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

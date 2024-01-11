@@ -1,4 +1,4 @@
-package com.ljb.ktor
+package com.ljb.ktor.news
 
 import android.graphics.Rect
 import android.view.LayoutInflater
@@ -8,13 +8,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ljb.ktor.R
 import com.ljb.ktor.databinding.ItemNewsBinding
+import com.ljb.ktor.dp
+import com.ljb.ktor.htmlToString
 
 class NewsAdapter : ListAdapter<NewsData, NewsViewHolder>(NewsDiff()){
     lateinit var binding: ItemNewsBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_news, parent, false)
+        binding = DataBindingUtil.inflate(LayoutInflater.from(parent.context),
+            R.layout.item_news, parent, false)
         return NewsViewHolder(binding)
     }
 
