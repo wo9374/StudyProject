@@ -23,6 +23,13 @@ android {
 
         buildConfigField("String", "NAVER_CLIENT_ID", getLocalProperty("naver_client_id"))
         buildConfigField("String", "NAVER_CLIENT_SECRET", getLocalProperty("naver_client_secret"))
+
+        buildConfigField("String", "DATA_API_KEY_ENCODE", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(
+            rootDir
+        ).getProperty("data_api_key_encode"))
+        buildConfigField("String", "DATA_API_KEY_DECODE", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(
+            rootDir
+        ).getProperty("data_api_key_decode"))
     }
 
     buildTypes {

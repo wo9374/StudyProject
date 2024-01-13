@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.ljb.ktor.news.NewsActivity
 import com.ljb.ktor.databinding.ActivityMainBinding
+import com.ljb.ktor.holiday.HolidayActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +29,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             btnHoliday.setOnClickListener {
-
+                val intent = Intent(this@MainActivity, HolidayActivity::class.java)
+                startActivity(intent)
             }
         }
     }
